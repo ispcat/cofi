@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getRoomById } from '@/lib/db';
+import { getRoomById, getRoomUsers } from '@/lib/db';
 
 export async function GET(
   request: Request,
@@ -16,7 +16,9 @@ export async function GET(
       );
     }
     
-    return NextResponse.json({ room });
+    const users = getRoomUsers(id.toUpperCase());
+    
+    return NextResponse.json({ room, users });
   } catch (error) {
     console.error('Error fetching room:', error);
     return NextResponse.json(

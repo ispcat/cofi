@@ -12,10 +12,30 @@ db.exec(`
   )
 `);
 
+db.exec(`
+  CREATE TABLE IF NOT EXISTS room_users (
+    room_id TEXT NOT NULL,
+    user_id TEXT NOT NULL,
+    object_id TEXT NOT NULL,
+    is_active INTEGER DEFAULT 0,
+    joined_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (room_id, user_id),
+    FOREIGN KEY (room_id) REFERENCES rooms(id)
+  )
+`);
+
 export interface Room {
   id: string;
   theme: 'rainy' | 'midnight' | 'forest';
   created_at: string;
+}
+
+export interface RoomUser {
+  room_id: string;
+  user_id: string;
+  object_id: string;
+  is_active: number;
+  joined_at: string;
 }
 
 export function createRoom(id: string, theme: Room['theme']): Room {
@@ -42,6 +62,44 @@ export function generateRoomId(): string {
   }
   
   return id;
+}
+
+export function generateUserId(): string {
+  return Math.random().toString(36).substring(2, 15);
+}
+
+export function assignUserToObject(roomId: string, userId: string, objectId: string): void {
+  const stmt = db.prepare('INSERT OR REPLACE INTO room_users (room_id, user_id, object_id, is_active) VALUES (?, ?, ?, 0)');
+  stmt.run(roomId, userId, objectId);
+}
+
+export function getRoomUsers(roomId: string): RoomUser[] {
+  const stmt = db.prepare('SELECT * FROM room_users WHERE room_id = ?');
+  return stmt.all(roomId) as RoomUser[];
+}
+
+export function getUserObject(roomId: string, userId: string): RoomUser | null {
+  const stmt = db.prepare('SELECT * FROM room_users WHERE room_id = ? AND user_id = ?');
+  return stmt.get(roomId, userId) as RoomUser | undefined || null;
+}
+
+export function toggleUserObject(roomId: string, userId: string): void {
+  const stmt = db.prepare('UPDATE room_users SET is_active = NOT is_active WHERE room_id = ? AND user_id = ?');
+  stmt.run(roomId, userId);
+}
+
+export function getAvailableObjects(roomId: string, theme: Room['theme']): string[] {
+  const themeObjects: Record<Room['theme'], string[]> = {
+    rainy: ['window', 'lamp', 'plant', 'book'],
+    midnight: ['neon', 'fridge', 'radio', 'vending'],
+    forest: ['fire', 'tent', 'trees', 'guitar'],
+  };
+  
+  const allObjects = themeObjects[theme];
+  const assignedObjects = getRoomUsers(roomId).map(u => u.object_id);
+  const available = allObjects.filter(obj => !assignedObjects.includes(obj));
+  
+  return available.length > 0 ? available : allObjects;
 }
 
 export default db;
