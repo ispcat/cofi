@@ -69,7 +69,12 @@ export function generateUserId(): string {
 }
 
 export function assignUserToObject(roomId: string, userId: string, objectId: string): void {
-  const stmt = db.prepare('INSERT OR REPLACE INTO room_users (room_id, user_id, object_id, is_active) VALUES (?, ?, ?, 0)');
+  const existing = getUserObject(roomId, userId);
+  if (existing) {
+    return;
+  }
+  
+  const stmt = db.prepare('INSERT INTO room_users (room_id, user_id, object_id, is_active) VALUES (?, ?, ?, 0)');
   stmt.run(roomId, userId, objectId);
 }
 
@@ -99,6 +104,7 @@ export function getAvailableObjects(roomId: string, theme: Room['theme']): strin
   const assignedObjects = getRoomUsers(roomId).map(u => u.object_id);
   const available = allObjects.filter(obj => !assignedObjects.includes(obj));
   
+  // If all objects are taken, allow reassignment (multiple users per object)
   return available.length > 0 ? available : allObjects;
 }
 

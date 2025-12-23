@@ -7,6 +7,7 @@ export async function POST(
 ) {
   try {
     const { id } = await params;
+    const { userId: existingUserId } = await request.json();
     const roomId = id.toUpperCase();
     const room = getRoomById(roomId);
     
@@ -17,7 +18,16 @@ export async function POST(
       );
     }
     
-    const userId = generateUserId();
+    // Check if user already exists in this room
+    if (existingUserId) {
+      const existing = getUserObject(roomId, existingUserId);
+      if (existing) {
+        return NextResponse.json({ userId: existingUserId, userObject: existing });
+      }
+    }
+    
+    // Generate new user ID
+    const userId = existingUserId || generateUserId();
     const availableObjects = getAvailableObjects(roomId, room.theme);
     
     if (availableObjects.length === 0) {
