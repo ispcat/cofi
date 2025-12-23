@@ -77,4 +77,4 @@ Warm campfire setting with orange and green forest tones.
 
 ## License
 
-ISC
+Apache License 2.0
