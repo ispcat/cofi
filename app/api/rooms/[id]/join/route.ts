@@ -7,7 +7,8 @@ export async function POST(
 ) {
   try {
     const { id } = await params;
-    const { userId: existingUserId } = await request.json();
+    const body = await request.json().catch(() => ({}));
+    const { userId: existingUserId } = body;
     const roomId = id.toUpperCase();
     const room = getRoomById(roomId);
     

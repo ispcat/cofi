@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import ThemeCard from '@/components/ThemeCard';
 
 type ViewState = 'landing' | 'room';
@@ -17,16 +17,18 @@ interface RoomUser {
   object_id: string;
   is_active: number;
   joined_at: string;
+  last_seen: string;
 }
 
 interface InteractiveObject {
   id: string;
   name: string;
-  icon: string;
-  x: number;
-  y: number;
+  imagePath: string;
+  position: { top: string; left: string };
+  size: { width: number; height: number };
   isActive: boolean;
   isMe: boolean;
+  isAssigned: boolean;
 }
 
 const themeConfigs = {
@@ -34,30 +36,102 @@ const themeConfigs = {
     name: 'Rainy Room',
     bgClass: 'bg-gradient-to-br from-slate-700 via-blue-900 to-slate-800',
     objects: [
-      { id: 'window', name: 'Window', icon: '🪟', x: 20, y: 20 },
-      { id: 'lamp', name: 'Lamp', icon: '💡', x: 70, y: 30 },
-      { id: 'plant', name: 'Plant', icon: '🪴', x: 50, y: 60 },
-      { id: 'book', name: 'Book', icon: '📖', x: 30, y: 70 },
+      { 
+        id: 'window', 
+        name: 'Window',
+        imagePath: '/assets/rainy/window.gif',
+        position: { top: '15%', left: '20%' },
+        size: { width: 200, height: 200 }
+      },
+      { 
+        id: 'lamp', 
+        name: 'Lamp',
+        imagePath: '/assets/rainy/lamp.gif',
+        position: { top: '25%', left: '75%' },
+        size: { width: 150, height: 150 }
+      },
+      { 
+        id: 'plant', 
+        name: 'Plant',
+        imagePath: '/assets/rainy/plant.gif',
+        position: { top: '60%', left: '50%' },
+        size: { width: 180, height: 180 }
+      },
+      { 
+        id: 'book', 
+        name: 'Book',
+        imagePath: '/assets/rainy/book.gif',
+        position: { top: '70%', left: '25%' },
+        size: { width: 160, height: 160 }
+      },
     ],
   },
   midnight: {
     name: 'Midnight Mart',
     bgClass: 'bg-gradient-to-br from-purple-900 via-pink-900 to-indigo-900',
     objects: [
-      { id: 'neon', name: 'Neon Sign', icon: '🏪', x: 50, y: 20 },
-      { id: 'fridge', name: 'Fridge', icon: '🧊', x: 25, y: 50 },
-      { id: 'radio', name: 'Radio', icon: '📻', x: 75, y: 40 },
-      { id: 'vending', name: 'Vending Machine', icon: '🥤', x: 60, y: 70 },
+      { 
+        id: 'neon', 
+        name: 'Neon Sign',
+        imagePath: '/assets/midnight/neon.gif',
+        position: { top: '15%', left: '50%' },
+        size: { width: 220, height: 220 }
+      },
+      { 
+        id: 'fridge', 
+        name: 'Fridge',
+        imagePath: '/assets/midnight/fridge.gif',
+        position: { top: '45%', left: '20%' },
+        size: { width: 180, height: 180 }
+      },
+      { 
+        id: 'radio', 
+        name: 'Radio',
+        imagePath: '/assets/midnight/radio.gif',
+        position: { top: '35%', left: '80%' },
+        size: { width: 150, height: 150 }
+      },
+      { 
+        id: 'vending', 
+        name: 'Vending Machine',
+        imagePath: '/assets/midnight/vending.gif',
+        position: { top: '70%', left: '65%' },
+        size: { width: 200, height: 200 }
+      },
     ],
   },
   forest: {
     name: 'Forest Camp',
     bgClass: 'bg-gradient-to-br from-green-900 via-orange-900 to-green-800',
     objects: [
-      { id: 'fire', name: 'Campfire', icon: '🔥', x: 50, y: 60 },
-      { id: 'tent', name: 'Tent', icon: '⛺', x: 30, y: 40 },
-      { id: 'trees', name: 'Trees', icon: '🌲', x: 20, y: 25 },
-      { id: 'guitar', name: 'Guitar', icon: '🎸', x: 70, y: 55 },
+      { 
+        id: 'fire', 
+        name: 'Campfire',
+        imagePath: '/assets/forest/fire.gif',
+        position: { top: '55%', left: '50%' },
+        size: { width: 200, height: 200 }
+      },
+      { 
+        id: 'tent', 
+        name: 'Tent',
+        imagePath: '/assets/forest/tent.gif',
+        position: { top: '40%', left: '25%' },
+        size: { width: 180, height: 180 }
+      },
+      { 
+        id: 'trees', 
+        name: 'Trees',
+        imagePath: '/assets/forest/trees.gif',
+        position: { top: '20%', left: '15%' },
+        size: { width: 220, height: 220 }
+      },
+      { 
+        id: 'guitar', 
+        name: 'Guitar',
+        imagePath: '/assets/forest/guitar.gif',
+        position: { top: '50%', left: '75%' },
+        size: { width: 160, height: 160 }
+      },
     ],
   },
 };
@@ -70,13 +144,14 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Room state
   const [room, setRoom] = useState<RoomData | null>(null);
   const [userId, setUserId] = useState<string>('');
   const [objects, setObjects] = useState<InteractiveObject[]>([]);
   const [isMuted, setIsMuted] = useState(false);
 
-  // Check localStorage on mount
+  const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const heartbeatIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
   useEffect(() => {
     const savedRoomId = localStorage.getItem('cofi_room_id');
     const savedUserId = localStorage.getItem('cofi_user_id');
@@ -85,6 +160,72 @@ export default function Home() {
       reconnectToRoom(savedRoomId, savedUserId);
     }
   }, []);
+
+  useEffect(() => {
+    if (view === 'room' && room && userId) {
+      startPolling();
+      startHeartbeat();
+    } else {
+      stopPolling();
+      stopHeartbeat();
+    }
+
+    return () => {
+      stopPolling();
+      stopHeartbeat();
+    };
+  }, [view, room, userId]);
+
+  const startPolling = () => {
+    if (pollIntervalRef.current) return;
+    
+    pollIntervalRef.current = setInterval(async () => {
+      if (!room || !userId) return;
+      
+      try {
+        const response = await fetch(`/api/rooms/${room.id}`);
+        const data = await response.json();
+        
+        if (response.ok) {
+          updateObjects(room.theme, data.users, userId);
+        }
+      } catch (err) {
+        console.error('Polling error:', err);
+      }
+    }, 2000);
+  };
+
+  const stopPolling = () => {
+    if (pollIntervalRef.current) {
+      clearInterval(pollIntervalRef.current);
+      pollIntervalRef.current = null;
+    }
+  };
+
+  const startHeartbeat = () => {
+    if (heartbeatIntervalRef.current) return;
+    
+    heartbeatIntervalRef.current = setInterval(async () => {
+      if (!room || !userId) return;
+      
+      try {
+        await fetch(`/api/rooms/${room.id}/heartbeat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId }),
+        });
+      } catch (err) {
+        console.error('Heartbeat error:', err);
+      }
+    }, 10000);
+  };
+
+  const stopHeartbeat = () => {
+    if (heartbeatIntervalRef.current) {
+      clearInterval(heartbeatIntervalRef.current);
+      heartbeatIntervalRef.current = null;
+    }
+  };
 
   const reconnectToRoom = async (roomId: string, userId: string) => {
     setIsLoading(true);
@@ -156,10 +297,15 @@ export default function Home() {
     try {
       const savedUserId = localStorage.getItem('cofi_user_id');
       
+      const requestBody: { userId?: string } = {};
+      if (savedUserId) {
+        requestBody.userId = savedUserId;
+      }
+      
       const joinResponse = await fetch(`/api/rooms/${roomId}/join`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: savedUserId }),
+        body: JSON.stringify(requestBody),
       });
       const joinData = await joinResponse.json();
 
@@ -198,6 +344,7 @@ export default function Home() {
         ...obj,
         isActive: user ? user.is_active === 1 : false,
         isMe: user ? user.user_id === currentUserId : false,
+        isAssigned: !!user,
       };
     });
     setObjects(objectsWithState);
@@ -243,7 +390,6 @@ export default function Home() {
     );
   }
 
-  // Room View
   if (view === 'room' && room) {
     const config = themeConfigs[room.theme];
 
@@ -270,37 +416,68 @@ export default function Home() {
           <div className="bg-black bg-opacity-40 backdrop-blur-md rounded-2xl px-4 py-2 border-2 border-white border-opacity-20">
             <h1 className="text-xl font-bold">{config.name}</h1>
             <p className="text-sm opacity-70">ID: {room.id}</p>
+            <p className="text-xs opacity-50 mt-1">
+              {objects.filter(o => o.isAssigned).length} / {objects.length} players
+            </p>
           </div>
         </div>
 
-        <div className="h-screen relative">
+        <div className="h-screen w-screen relative">
           {objects.map((obj) => (
             <button
               key={obj.id}
               onClick={() => handleObjectClick(obj.id, obj.isMe)}
               disabled={!obj.isMe}
-              className={`absolute transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ${
+              className={`absolute transition-all duration-300 ${
                 obj.isMe ? 'cursor-pointer hover:scale-110 animate-float' : 'cursor-default'
-              } ${obj.isActive ? 'scale-125' : 'scale-100'}`}
-              style={{ left: `${obj.x}%`, top: `${obj.y}%` }}
-              title={obj.isMe ? `You are ${obj.name}` : obj.name}
+              } ${obj.isActive ? 'scale-110' : 'scale-100'}`}
+              style={{ 
+                top: obj.position.top, 
+                left: obj.position.left,
+                transform: 'translate(-50%, -50%)',
+                width: `clamp(100px, ${obj.size.width}px, 20vw)`,
+                height: `clamp(100px, ${obj.size.height}px, 20vw)`,
+              }}
+              title={obj.isMe ? `You are controlling this` : ''}
             >
-              <div className="relative">
+              <div className="relative w-full h-full">
                 {obj.isMe && (
-                  <div className="absolute inset-0 bg-white rounded-lg opacity-30 blur-md animate-pulse-slow"></div>
+                  <div className="absolute inset-0 bg-white rounded-lg opacity-30 blur-md animate-pulse-slow z-0"></div>
                 )}
-                <div className={`text-6xl md:text-8xl filter drop-shadow-2xl ${
-                  obj.isMe ? 'border-4 border-white rounded-lg p-2 bg-black bg-opacity-20' : ''
-                }`}>
-                  {obj.icon}
+                
+                <div className={`relative w-full h-full ${
+                  obj.isMe ? 'ring-4 ring-white ring-opacity-50 rounded-lg' : ''
+                } ${!obj.isAssigned ? 'grayscale opacity-40' : ''}`}>
+                  {obj.isActive ? (
+                    <img
+                      src={obj.imagePath}
+                      alt={obj.name}
+                      className="w-full h-full object-contain"
+                    />
+                  ) : (
+                    <canvas
+                      ref={(canvas) => {
+                        if (canvas && !canvas.dataset.loaded) {
+                          canvas.dataset.loaded = 'true';
+                          const ctx = canvas.getContext('2d');
+                          const img = new Image();
+                          img.onload = () => {
+                            canvas.width = img.width;
+                            canvas.height = img.height;
+                            ctx?.drawImage(img, 0, 0);
+                          };
+                          img.src = obj.imagePath;
+                        }
+                      }}
+                      className="w-full h-full object-contain"
+                    />
+                  )}
                 </div>
-                {obj.isActive && (
-                  <div className="absolute inset-0 bg-yellow-300 rounded-full opacity-20 animate-ping"></div>
+
+                {obj.isActive && obj.isAssigned && (
+                  <div className="absolute inset-0 bg-yellow-300 rounded-full opacity-10 animate-ping z-0"></div>
                 )}
               </div>
-              <p className={`text-sm mt-2 font-bold ${obj.isMe ? 'text-yellow-300' : ''}`}>
-                {obj.isMe ? '👆 You' : obj.name}
-              </p>
             </button>
           ))}
         </div>
@@ -321,7 +498,6 @@ export default function Home() {
     );
   }
 
-  // Landing View
   return (
     <div className="min-h-screen flex items-center justify-center animated-gradient noise-bg">
       <div className="text-center z-10">
