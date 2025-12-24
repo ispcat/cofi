@@ -407,6 +407,7 @@ export default function Home() {
           theme={room.theme}
           activeObjects={activeObjects}
           isMuted={isMuted}
+          roomCreatedAt={room.created_at}
         />
 
         <div className="absolute top-6 right-6 flex gap-3 z-10">

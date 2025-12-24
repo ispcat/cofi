@@ -6,12 +6,25 @@ interface AudioManagerProps {
   theme: 'rainy' | 'midnight' | 'forest';
   activeObjects: { [key: string]: boolean };
   isMuted: boolean;
+  roomCreatedAt: string;
 }
 
-export default function AudioManager({ theme, activeObjects, isMuted }: AudioManagerProps) {
+export default function AudioManager({ theme, activeObjects, isMuted, roomCreatedAt }: AudioManagerProps) {
   const backgroundAudioRef = useRef<HTMLAudioElement | null>(null);
   const objectAudiosRef = useRef<{ [key: string]: HTMLAudioElement }>({});
   const [isInitialized, setIsInitialized] = useState(false);
+
+  // Calculate synchronized playback position based on room creation time
+  const getSyncedPlaybackTime = (audio: HTMLAudioElement) => {
+    const roomCreatedTime = new Date(roomCreatedAt).getTime();
+    const now = Date.now();
+    const elapsed = (now - roomCreatedTime) / 1000; // seconds
+    
+    if (audio.duration && !isNaN(audio.duration)) {
+      return elapsed % audio.duration;
+    }
+    return 0;
+  };
 
   // Initialize and start audio immediately when entering room
   useEffect(() => {
@@ -34,28 +47,38 @@ export default function AudioManager({ theme, activeObjects, isMuted }: AudioMan
       objectAudiosRef.current[key] = audio;
     });
 
-    // Start background music immediately
-    bgAudio.play().catch(err => {
-      console.log('Background music autoplay blocked by browser, will play on first user interaction');
-      
-      // Fallback: play on first user interaction
-      const playAudio = () => {
-        bgAudio.play().catch(e => console.log('Audio play error:', e));
-        document.removeEventListener('click', playAudio);
-        document.removeEventListener('keydown', playAudio);
-      };
-      
-      document.addEventListener('click', playAudio);
-      document.addEventListener('keydown', playAudio);
+    // Wait for audio metadata to load, then sync playback position
+    bgAudio.addEventListener('loadedmetadata', () => {
+      const syncTime = getSyncedPlaybackTime(bgAudio);
+      bgAudio.currentTime = syncTime;
+      console.log(`Syncing background music to ${syncTime.toFixed(2)}s`);
     });
 
-    setIsInitialized(true);
+    // Start background music immediately
+    const playPromise = bgAudio.play();
+    
+    if (playPromise !== undefined) {
+      playPromise.catch(err => {
+        console.log('Background music autoplay blocked by browser, will play on first user interaction');
+        
+        // Fallback: play on first user interaction
+        const playAudio = () => {
+          const syncTime = getSyncedPlaybackTime(bgAudio);
+          bgAudio.currentTime = syncTime;
+          bgAudio.play().catch(e => console.log('Audio play error:', e));
+          document.removeEventListener('click', playAudio);
+          document.removeEventListener('keydown', playAudio);
+          document.removeEventListener('touchstart', playAudio);
+        };
+        
+        document.addEventListener('click', playAudio, { once: true });
+        document.addEventListener('keydown', playAudio, { once: true });
+        document.addEventListener('touchstart', playAudio, { once: true });
+      });
+    }
 
-    return () => {
-      document.removeEventListener('click', () => {});
-      document.removeEventListener('keydown', () => {});
-    };
-  }, [theme, activeObjects, isMuted, isInitialized]);
+    setIsInitialized(true);
+  }, [theme, activeObjects, isMuted, isInitialized, roomCreatedAt]);
 
   // Handle mute/unmute
   useEffect(() => {
