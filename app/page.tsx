@@ -324,6 +324,12 @@ export default function Home() {
       localStorage.setItem('cofi_room_id', roomId);
       localStorage.setItem('cofi_user_id', joinData.userId);
 
+      // Show spectator message if room is full
+      if (joinData.message) {
+        setError(joinData.message);
+        setTimeout(() => setError(''), 5000); // Clear message after 5 seconds
+      }
+
       setUserId(joinData.userId);
       setRoom(roomData.room);
       updateObjects(roomData.room.theme, roomData.users, joinData.userId);
@@ -434,6 +440,11 @@ export default function Home() {
             <p className="text-xs opacity-50 mt-1">
               {objects.filter(o => o.isAssigned).length} / {objects.length} players
             </p>
+            {!objects.some(o => o.isMe) && (
+              <p className="text-xs text-yellow-300 mt-1">
+                👁️ Spectator Mode
+              </p>
+            )}
           </div>
         </div>
 
