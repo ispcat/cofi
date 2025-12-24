@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import ThemeCard from '@/components/ThemeCard';
+import AudioManager from '@/components/AudioManager';
 
 type ViewState = 'landing' | 'room';
 
@@ -382,6 +383,12 @@ export default function Home() {
     setError('');
   };
 
+  // Get active objects for audio manager
+  const activeObjects = objects.reduce((acc, obj) => {
+    acc[obj.id] = obj.isActive;
+    return acc;
+  }, {} as { [key: string]: boolean });
+
   if (isLoading && view === 'landing') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-900">
@@ -395,6 +402,13 @@ export default function Home() {
 
     return (
       <div className={`min-h-screen ${config.bgClass} relative overflow-hidden`}>
+        {/* Audio Manager */}
+        <AudioManager 
+          theme={room.theme}
+          activeObjects={activeObjects}
+          isMuted={isMuted}
+        />
+
         <div className="absolute top-6 right-6 flex gap-3 z-10">
           <button
             onClick={() => setIsMuted(!isMuted)}
