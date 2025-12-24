@@ -7,6 +7,8 @@ export async function POST(
 ) {
   try {
     const { id } = await params;
+    const body = await request.json().catch(() => ({}));
+    const { userId: existingUserId } = body;
     const roomId = id.toUpperCase();
     const room = getRoomById(roomId);
     
@@ -17,16 +19,28 @@ export async function POST(
       );
     }
     
-    const userId = generateUserId();
-    const availableObjects = getAvailableObjects(roomId, room.theme);
-    
-    if (availableObjects.length === 0) {
-      return NextResponse.json(
-        { error: 'Room is full' },
-        { status: 400 }
-      );
+    // Check if user already exists in this room
+    if (existingUserId) {
+      const existing = getUserObject(roomId, existingUserId);
+      if (existing) {
+        return NextResponse.json({ userId: existingUserId, userObject: existing });
+      }
     }
     
+    // Generate new user ID
+    const userId = existingUserId || generateUserId();
+    const availableObjects = getAvailableObjects(roomId, room.theme);
+    
+    // If no objects available, allow entry as spectator (no assignment)
+    if (availableObjects.length === 0) {
+      return NextResponse.json({ 
+        userId, 
+        userObject: null,
+        message: 'Room is full, joined as spectator'
+      });
+    }
+    
+    // Assign to available object
     const assignedObject = availableObjects[Math.floor(Math.random() * availableObjects.length)];
     assignUserToObject(roomId, userId, assignedObject);
     

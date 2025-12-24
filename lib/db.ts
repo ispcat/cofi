@@ -19,6 +19,7 @@ db.exec(`
     object_id TEXT NOT NULL,
     is_active INTEGER DEFAULT 0,
     joined_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    last_seen DATETIME DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (room_id, user_id),
     FOREIGN KEY (room_id) REFERENCES rooms(id)
   )
@@ -36,6 +37,7 @@ export interface RoomUser {
   object_id: string;
   is_active: number;
   joined_at: string;
+  last_seen: string;
 }
 
 export function createRoom(id: string, theme: Room['theme']): Room {
@@ -69,13 +71,42 @@ export function generateUserId(): string {
 }
 
 export function assignUserToObject(roomId: string, userId: string, objectId: string): void {
-  const stmt = db.prepare('INSERT OR REPLACE INTO room_users (room_id, user_id, object_id, is_active) VALUES (?, ?, ?, 0)');
+  const existing = getUserObject(roomId, userId);
+  if (existing) {
+    // Update last_seen if user already exists
+    updateUserActivity(roomId, userId);
+    return;
+  }
+  
+  const stmt = db.prepare('INSERT INTO room_users (room_id, user_id, object_id, is_active, last_seen) VALUES (?, ?, ?, 0, CURRENT_TIMESTAMP)');
   stmt.run(roomId, userId, objectId);
 }
 
 export function getRoomUsers(roomId: string): RoomUser[] {
   const stmt = db.prepare('SELECT * FROM room_users WHERE room_id = ?');
-  return stmt.all(roomId) as RoomUser[];
+  const users = stmt.all(roomId) as RoomUser[];
+  
+  // Filter out offline users (inactive for more than 30 seconds)
+  const now = Date.now();
+  return users.filter(user => {
+    const lastSeen = new Date(user.last_seen + ' UTC').getTime();
+    const isOnline = (now - lastSeen) < 30000; // 30 seconds timeout
+    return isOnline;
+  });
+}
+
+export function updateUserActivity(roomId: string, userId: string): void {
+  const stmt = db.prepare('UPDATE room_users SET last_seen = CURRENT_TIMESTAMP WHERE room_id = ? AND user_id = ?');
+  stmt.run(roomId, userId);
+}
+
+export function cleanupInactiveUsers(roomId: string): void {
+  const stmt = db.prepare(`
+    DELETE FROM room_users 
+    WHERE room_id = ? 
+    AND (julianday('now') - julianday(last_seen)) * 86400 > 30
+  `);
+  stmt.run(roomId);
 }
 
 export function getUserObject(roomId: string, userId: string): RoomUser | null {
@@ -99,6 +130,7 @@ export function getAvailableObjects(roomId: string, theme: Room['theme']): strin
   const assignedObjects = getRoomUsers(roomId).map(u => u.object_id);
   const available = allObjects.filter(obj => !assignedObjects.includes(obj));
   
+  // If all objects are taken, allow reassignment (multiple users per object)
   return available.length > 0 ? available : allObjects;
 }
 
