@@ -21,6 +21,7 @@ export default function AudioManager({ theme, objects, isMuted, roomCreatedAt }:
   const backgroundAudioRef = useRef<HTMLAudioElement | null>(null);
   const objectAudiosRef = useRef<{ [key: string]: HTMLAudioElement }>({});
   const [isInitialized, setIsInitialized] = useState(false);
+  const [blocked, setBlocked] = useState(false);
 
   // Calculate synchronized playback position based on room creation time
   const getSyncedPlaybackTime = (audio: HTMLAudioElement) => {
@@ -32,6 +33,20 @@ export default function AudioManager({ theme, objects, isMuted, roomCreatedAt }:
       return elapsed % audio.duration;
     }
     return 0;
+  };
+
+  // Helper to resume/play audio manually
+  const resumeAudio = () => {
+    if (backgroundAudioRef.current) {
+        const bgAudio = backgroundAudioRef.current;
+        const syncTime = getSyncedPlaybackTime(bgAudio);
+        // Only set time if significant drift or not started
+        if (Math.abs(bgAudio.currentTime - syncTime) > 1) {
+            bgAudio.currentTime = syncTime;
+        }
+        bgAudio.play().catch(console.error);
+    }
+    setBlocked(false);
   };
 
   // Initialize and start audio immediately when entering room
@@ -67,21 +82,20 @@ export default function AudioManager({ theme, objects, isMuted, roomCreatedAt }:
     
     if (playPromise !== undefined) {
       playPromise.catch(err => {
-        console.log('Background music autoplay blocked by browser, will play on first user interaction');
+        console.log('Background music autoplay blocked by browser.');
+        setBlocked(true);
         
-        // Fallback: play on first user interaction
-        const playAudio = () => {
-          const syncTime = getSyncedPlaybackTime(bgAudio);
-          bgAudio.currentTime = syncTime;
-          bgAudio.play().catch(e => console.log('Audio play error:', e));
-          document.removeEventListener('click', playAudio);
-          document.removeEventListener('keydown', playAudio);
-          document.removeEventListener('touchstart', playAudio);
+        // Fallback: also listen for global clicks just in case user ignores overlay
+        const autoResume = () => {
+          resumeAudio();
+          document.removeEventListener('click', autoResume);
+          document.removeEventListener('keydown', autoResume);
+          document.removeEventListener('touchstart', autoResume);
         };
         
-        document.addEventListener('click', playAudio, { once: true });
-        document.addEventListener('keydown', playAudio, { once: true });
-        document.addEventListener('touchstart', playAudio, { once: true });
+        document.addEventListener('click', autoResume, { once: true });
+        document.addEventListener('keydown', autoResume, { once: true });
+        document.addEventListener('touchstart', autoResume, { once: true });
       });
     }
 
@@ -131,5 +145,17 @@ export default function AudioManager({ theme, objects, isMuted, roomCreatedAt }:
     };
   }, []);
 
-  return null;
+  if (!blocked) return null;
+
+  return (
+    <div 
+        className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm cursor-pointer"
+        onClick={resumeAudio}
+    >
+        <div className="bg-white/10 p-6 rounded-full border-2 border-white/30 hover:scale-110 transition-transform animate-pulse">
+            <span className="text-4xl">▶️</span>
+        </div>
+        <p className="absolute bottom-1/4 text-white/80 font-mono text-sm uppercase tracking-widest">Click to Start Audio</p>
+    </div>
+  );
 }
