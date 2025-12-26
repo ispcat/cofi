@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import ThemeCard from "@/components/ThemeCard";
-import AudioManager from "@/components/AudioManager";
+import { useState, useEffect, useRef } from 'react';
+import ThemeCard from '@/components/ThemeCard';
+import AudioManager from '@/components/AudioManager';
+import GifObject from '@/components/GifObject';
 
-type ViewState = "landing" | "room";
+type ViewState = 'landing' | 'room';
 
 interface RoomData {
   id: string;
@@ -396,7 +397,7 @@ export default function Home() {
                             ? "cursor-pointer z-20 hover:scale-105"
                             : "cursor-default z-10"
                         }
-                        ${obj.isActive ? "scale-100" : "scale-95"}
+                        scale-100
                     `}
               style={{
                 top: obj.position.top,
@@ -406,25 +407,22 @@ export default function Home() {
                 transform: "translate(-50%, -50%)", // Center the positioning point
               }}
             >
-              {/* Core logic change:
+                    {/* Core logic change:
                         Do not switch images, use CSS Filter to indicate "inactive".
                         Inactive = Darkened + Grayscale
                         Active = Original color + Normal brightness
                      */}
-              {obj.imagePath && (
-                <img
-                  src={obj.imagePath}
-                  alt={obj.name}
-                  className={`w-full h-full object-contain transition-all duration-500
-                                ${
-                                  obj.isActive
-                                    ? "grayscale-0 opacity-100 drop-shadow-lg"
-                                    : "grayscale opacity-50 contrast-125"
-                                }
+                    {obj.imagePath && (
+                        <GifObject 
+                            src={obj.imagePath} 
+                            alt={obj.name}
+                            isActive={obj.isActive}
+                            className={`w-full h-full object-contain transition-all duration-500
+                                ${obj.isActive ? 'grayscale-0 opacity-100 drop-shadow-lg' : 'grayscale opacity-50 contrast-125'}
                             `}
-                  style={{ imageRendering: "pixelated" }}
-                />
-              )}
+                            style={{ imageRendering: 'pixelated' }}
+                        />
+                    )}
 
               {/* Indicator for object controlled by self */}
               {obj.isMe && (
