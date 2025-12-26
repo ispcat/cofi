@@ -38,7 +38,7 @@ const themeConfigs = {
   rainy: {
     name: "Rainy Room",
     // Using style attribute to directly load the image
-    bgImage: "/assets/bg-main.png",
+    bgImage: "/assets/bg-main2.png",
     bgClass: "bg-slate-900", // fallback color
     objects: [
       {
