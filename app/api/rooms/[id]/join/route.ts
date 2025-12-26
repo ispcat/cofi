@@ -1,51 +1,54 @@
 import { NextResponse } from 'next/server';
-import { getRoomById, generateUserId, getAvailableObjects, assignUserToObject, getUserObject } from '@/lib/db';
+import { getRoomById, generateUserId, getAvailableObjects, assignUserToObject, getUserObject, initializeTables } from '@/lib/db';
 
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    // Ensure tables exist
+    await initializeTables();
+
     const { id } = await params;
     const body = await request.json().catch(() => ({}));
     const { userId: existingUserId } = body;
     const roomId = id.toUpperCase();
-    const room = getRoomById(roomId);
-    
+    const room = await getRoomById(roomId);
+
     if (!room) {
       return NextResponse.json(
         { error: 'Room not found' },
         { status: 404 }
       );
     }
-    
+
     // Check if user already exists in this room
     if (existingUserId) {
-      const existing = getUserObject(roomId, existingUserId);
+      const existing = await getUserObject(roomId, existingUserId);
       if (existing) {
         return NextResponse.json({ userId: existingUserId, userObject: existing });
       }
     }
-    
+
     // Generate new user ID
     const userId = existingUserId || generateUserId();
-    const availableObjects = getAvailableObjects(roomId, room.theme);
-    
+    const availableObjects = await getAvailableObjects(roomId, room.theme);
+
     // If no objects available, allow entry as spectator (no assignment)
     if (availableObjects.length === 0) {
-      return NextResponse.json({ 
-        userId, 
+      return NextResponse.json({
+        userId,
         userObject: null,
         message: 'Room is full, joined as spectator'
       });
     }
-    
+
     // Assign to available object
     const assignedObject = availableObjects[Math.floor(Math.random() * availableObjects.length)];
-    assignUserToObject(roomId, userId, assignedObject);
-    
-    const userObject = getUserObject(roomId, userId);
-    
+    await assignUserToObject(roomId, userId, assignedObject);
+
+    const userObject = await getUserObject(roomId, userId);
+
     return NextResponse.json({ userId, userObject });
   } catch (error) {
     console.error('Error joining room:', error);
