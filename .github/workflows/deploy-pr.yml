@@ -1,0 +1,85 @@
+name: build-docker-image-pr
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+env:
+  GHCR_REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-push-ghcr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.GHCR_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta-ghcr
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.GHCR_REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: pr-${{ github.event.pull_request.number }}
+
+      - name: Build and push Docker image to GitHub Container Registry
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta-ghcr.outputs.tags }}
+          labels: ${{ steps.meta-ghcr.outputs.labels }}
+
+  comment-pr:
+    runs-on: ubuntu-latest
+    needs: [build-and-push-ghcr]
+    if: github.event_name == 'pull_request'
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Comment on PR
+        uses: actions/github-script@v6
+        env:
+          GHCR_REGISTRY: ${{ env.GHCR_REGISTRY }}
+          IMAGE_NAME: ${{ env.IMAGE_NAME }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        with:
+          script: |
+            const ghcrImage = `${process.env.GHCR_REGISTRY}/${process.env.IMAGE_NAME}:pr-${process.env.PR_NUMBER}`.toLowerCase();
+            const comment_identifier = "<!-- docker-image-comment -->";
+            const comment = `🚀 Docker images built successfully!
+
+            - GHCR: \`${ghcrImage}\`
+
+            ${comment_identifier}`;
+            
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const old_comments = comments.filter(c => c.body.includes(comment_identifier));
+            for (const old_comment of old_comments) {
+              await github.rest.issues.deleteComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: old_comment.id,
+              });
+            }
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: comment
+            });
