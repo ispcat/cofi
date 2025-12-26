@@ -1,0 +1,16 @@
+services:
+  app:
+    container_name: cofi-prod
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - cofi_storage:/app/data
+    restart: always
+
+volumes:
+  cofi_storage:
