@@ -2,14 +2,22 @@
 
 import { useEffect, useRef, useState } from 'react';
 
+interface InteractiveObject {
+  id: string;
+  name: string;
+  imagePath: string;
+  soundPath?: string;
+  isActive: boolean;
+}
+
 interface AudioManagerProps {
   theme: 'rainy' | 'midnight' | 'forest';
-  activeObjects: { [key: string]: boolean };
+  objects: InteractiveObject[];
   isMuted: boolean;
   roomCreatedAt: string;
 }
 
-export default function AudioManager({ theme, activeObjects, isMuted, roomCreatedAt }: AudioManagerProps) {
+export default function AudioManager({ theme, objects, isMuted, roomCreatedAt }: AudioManagerProps) {
   const backgroundAudioRef = useRef<HTMLAudioElement | null>(null);
   const objectAudiosRef = useRef<{ [key: string]: HTMLAudioElement }>({});
   const [isInitialized, setIsInitialized] = useState(false);
@@ -38,13 +46,13 @@ export default function AudioManager({ theme, activeObjects, isMuted, roomCreate
     backgroundAudioRef.current = bgAudio;
 
     // Pre-load object sounds
-    const objectKeys = Object.keys(activeObjects);
-    objectKeys.forEach(key => {
-      const audio = new Audio(`/sounds/${theme}/${key}.mp3`);
+    objects.forEach(obj => {
+      if (!obj.soundPath) return;
+      const audio = new Audio(obj.soundPath);
       audio.loop = true;
       audio.volume = 0.7;
       audio.muted = isMuted;
-      objectAudiosRef.current[key] = audio;
+      objectAudiosRef.current[obj.id] = audio;
     });
 
     // Wait for audio metadata to load, then sync playback position
@@ -78,7 +86,7 @@ export default function AudioManager({ theme, activeObjects, isMuted, roomCreate
     }
 
     setIsInitialized(true);
-  }, [theme, activeObjects, isMuted, isInitialized, roomCreatedAt]);
+  }, [theme, objects, isMuted, isInitialized, roomCreatedAt]);
 
   // Handle mute/unmute
   useEffect(() => {
@@ -95,18 +103,18 @@ export default function AudioManager({ theme, activeObjects, isMuted, roomCreate
   useEffect(() => {
     if (!isInitialized) return;
 
-    Object.entries(activeObjects).forEach(([objectId, isActive]) => {
-      const audio = objectAudiosRef.current[objectId];
+    objects.forEach((obj) => {
+      const audio = objectAudiosRef.current[obj.id];
       if (!audio) return;
 
-      if (isActive) {
+      if (obj.isActive) {
         audio.play().catch(err => console.log('Object sound play error:', err));
       } else {
         audio.pause();
         audio.currentTime = 0;
       }
     });
-  }, [activeObjects, isInitialized]);
+  }, [objects, isInitialized]);
 
   // Cleanup on unmount
   useEffect(() => {

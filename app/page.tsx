@@ -25,6 +25,7 @@ interface InteractiveObject {
   id: string;
   name: string;
   imagePath: string; // Path to the GIF
+  soundPath?: string; // Path to the sound file
   position: { top: string; left: string };
   size: { width: number; height: number };
   isActive: boolean;
@@ -44,6 +45,7 @@ const themeConfigs = {
         id: 'cat', 
         name: 'Vibing Cat',
         imagePath: '/assets/cat-strip.gif',
+        soundPath: '/sounds/rainy/cat-strip.wav',
         // Based on the new background, the cat is around the carpet area
         position: { top: '68%', left: '42%' }, 
         size: { width: 140, height: 140 }
@@ -52,7 +54,8 @@ const themeConfigs = {
       { 
         id: 'kettle', 
         name: 'Kettle',
-        imagePath: '/assets/kettle-boiling.gif', // Place kettle.gif here later
+        imagePath: '/assets/kettle-boiling.gif', 
+        soundPath: '/sounds/rainy/kettle-boiling.wav',
         position: { top: '48%', left: '68%' }, // Right side of the table
         size: { width: 100, height: 100 }
       },
@@ -61,6 +64,7 @@ const themeConfigs = {
         id: 'computer', 
         name: 'Computer',
         imagePath: '/assets/computer-running.gif', 
+        soundPath: '/sounds/rainy/computer-running.wav',
         position: { top: '42%', left: '55%' }, // Left side of the table
         size: { width: 120, height: 120 }
       },
@@ -282,11 +286,6 @@ export default function Home() {
     setError('');
   };
 
-  const activeObjects = objects.reduce((acc, obj) => {
-    acc[obj.id] = obj.isActive;
-    return acc;
-  }, {} as { [key: string]: boolean });
-
   if (isLoading && view === 'landing') {
     return <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white animate-pulse">Loading...</div>;
   }
@@ -301,7 +300,7 @@ export default function Home() {
       >
         <AudioManager 
           theme={room.theme}
-          activeObjects={activeObjects}
+          objects={objects}
           isMuted={isMuted}
           roomCreatedAt={room.created_at}
         />
