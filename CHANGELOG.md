@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/ispcat/cofi/compare/v1.0.0...v1.0.1) (2025-12-26)
+
+
+### Bug Fixes
+
+* rain window cropping ([#8](https://github.com/ispcat/cofi/issues/8)) ([20a9a05](https://github.com/ispcat/cofi/commit/20a9a0549a2275917df7dc3cf3e9c398d2599f25))
+
 ## 1.0.0 (2025-12-26)
 
 
