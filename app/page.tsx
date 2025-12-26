@@ -52,7 +52,7 @@ const themeConfigs = {
       { 
         id: 'kettle', 
         name: 'Kettle',
-        imagePath: '', // 之後放 kettle.gif
+        imagePath: '/assets/kettle-boiling.gif', // 之後放 kettle.gif
         position: { top: '48%', left: '68%' }, // 桌子右邊
         size: { width: 100, height: 100 }
       },

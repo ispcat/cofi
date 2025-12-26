@@ -121,7 +121,7 @@ export function toggleUserObject(roomId: string, userId: string): void {
 
 export function getAvailableObjects(roomId: string, theme: Room['theme']): string[] {
   const themeObjects: Record<Room['theme'], string[]> = {
-    rainy: ['window', 'lamp', 'plant', 'book'],
+    rainy: ['cat', 'kettle', 'computer', 'window'],
     midnight: ['neon', 'fridge', 'radio', 'vending'],
     forest: ['fire', 'tent', 'trees', 'guitar'],
   };
