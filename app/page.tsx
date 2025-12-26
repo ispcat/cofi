@@ -27,7 +27,7 @@ interface InteractiveObject {
   imagePath: string; // Path to the GIF
   soundPath?: string; // Path to the sound file
   position: { top: string; left: string };
-  size: { width: number; height: number };
+  size: { width: string };
   isActive: boolean;
   isMe: boolean;
   isAssigned: boolean;
@@ -48,7 +48,7 @@ const themeConfigs = {
         soundPath: '/sounds/rainy/cat-strip.wav',
         // Based on the new background, the cat is around the carpet area
         position: { top: '68%', left: '42%' }, 
-        size: { width: 140, height: 140 }
+        size: { width: '12%' }
       },
       // Reserved for the kettle (currently hidden or use a placeholder)
       { 
@@ -57,7 +57,7 @@ const themeConfigs = {
         imagePath: '/assets/kettle-boiling.gif', 
         soundPath: '/sounds/rainy/kettle-boiling.wav',
         position: { top: '48%', left: '68%' }, // Right side of the table
-        size: { width: 100, height: 100 }
+        size: { width: '9%' }
       },
       // Reserved for the computer
       { 
@@ -66,7 +66,7 @@ const themeConfigs = {
         imagePath: '/assets/computer-running.gif', 
         soundPath: '/sounds/rainy/computer-running.wav',
         position: { top: '42%', left: '55%' }, // Left side of the table
-        size: { width: 120, height: 120 }
+        size: { width: '11%' }
       },
        // Reserved for the window (rain sound) - This is an invisible button area
        { 
@@ -75,7 +75,7 @@ const themeConfigs = {
         imagePath: '/assets/window-raining.gif', 
         soundPath: '/sounds/rainy/window-raining.wav',
         position: { top: '35%', left: '20%' }, 
-        size: { width: 300, height: 300 }
+        size: { width: '26%' }
       },
     ],
   },
@@ -353,7 +353,7 @@ export default function Home() {
                         top: obj.position.top, 
                         left: obj.position.left,
                         width: obj.size.width,
-                        height: obj.size.height,
+                        height: 'auto',
                         transform: 'translate(-50%, -50%)', // Center the positioning point
                     }}
                 >
