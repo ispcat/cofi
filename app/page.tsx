@@ -76,7 +76,7 @@ const themeConfigs = {
         imagePath: "/assets/window-raining2.gif",
         soundPath: "/sounds/rainy/window-raining.wav",
         position: { top: "29.4%", left: "24%" },
-        size: { width: "57.6%" },
+        size: { width: "38.6%" },
       },
     ],
   },
