@@ -24,7 +24,7 @@ interface RoomUser {
 interface InteractiveObject {
   id: string;
   name: string;
-  imagePath: string; // 這裡是 GIF 的路徑
+  imagePath: string; // Path to the GIF
   position: { top: string; left: string };
   size: { width: number; height: number };
   isActive: boolean;
@@ -32,11 +32,11 @@ interface InteractiveObject {
   isAssigned: boolean;
 }
 
-// 設定檔：這裡我先幫你把 Rainy Room 的座標對應到你的新背景圖
+// Config: Mapping Rainy Room coordinates to the new background image
 const themeConfigs = {
   rainy: {
     name: 'Rainy Room',
-    // 這裡改用 style 屬性直接吃圖片
+    // Using style attribute to directly load the image
     bgImage: '/assets/bg-main.png', 
     bgClass: 'bg-slate-900', // fallback color
     objects: [
@@ -44,37 +44,37 @@ const themeConfigs = {
         id: 'cat', 
         name: 'Vibing Cat',
         imagePath: '/assets/cat-strip.gif',
-        // 根據你的新背景圖，貓咪大概在地毯位置
+        // Based on the new background, the cat is around the carpet area
         position: { top: '68%', left: '42%' }, 
         size: { width: 140, height: 140 }
       },
-      // 預留給之後的水壺 (目前先隱藏或你可以放暫位圖)
+      // Reserved for the kettle (currently hidden or use a placeholder)
       { 
         id: 'kettle', 
         name: 'Kettle',
-        imagePath: '/assets/kettle-boiling.gif', // 之後放 kettle.gif
-        position: { top: '48%', left: '68%' }, // 桌子右邊
+        imagePath: '/assets/kettle-boiling.gif', // Place kettle.gif here later
+        position: { top: '48%', left: '68%' }, // Right side of the table
         size: { width: 100, height: 100 }
       },
-      // 預留給之後的電腦
+      // Reserved for the computer
       { 
         id: 'computer', 
         name: 'Computer',
-        imagePath: '', // 之後放 computer.gif
-        position: { top: '42%', left: '55%' }, // 桌子左邊
+        imagePath: '', // Place computer.gif here later
+        position: { top: '42%', left: '55%' }, // Left side of the table
         size: { width: 120, height: 120 }
       },
-       // 預留給窗戶 (雨聲) - 這是一個隱形按鈕區域
+       // Reserved for the window (rain sound) - This is an invisible button area
        { 
         id: 'window', 
         name: 'Rain Window',
-        imagePath: '', // 窗戶通常不需要圖，只要感應區
+        imagePath: '', // Windows usually don't need an image, just a hit area
         position: { top: '35%', left: '20%' }, 
         size: { width: 300, height: 300 }
       },
     ],
   },
-  // 其他房間先保持原樣，之後再改
+  // Keep other rooms as is for now, update later
   midnight: {
     name: 'Midnight Mart',
     bgImage: '',
@@ -105,10 +105,10 @@ export default function Home() {
   const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const heartbeatIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // ... (這裡的 useEffect 和 Polling 邏輯保持不變，為了版面簡潔我省略中間未變動的邏輯) ...
-  // ... (請保留你原本的 useEffect, startPolling, handleJoinRoom 等函式) ...
+  // ... (useEffect and Polling logic remains unchanged, omitted for brevity) ...
+  // ... (Please keep your original useEffect, startPolling, handleJoinRoom, etc.) ...
   
-  // ⚠️ 為了確保你可以直接複製貼上，這裡我把關鍵的 hook 邏輯補回來，請確認沒有遺漏
+  // ⚠️ To ensure you can copy-paste directly, I've added back the key hook logic. Please check for any omissions.
   useEffect(() => {
     const savedRoomId = localStorage.getItem('cofi_room_id');
     const savedUserId = localStorage.getItem('cofi_user_id');
@@ -235,18 +235,18 @@ export default function Home() {
   };
 
   const updateObjects = (theme: RoomData['theme'], users: RoomUser[], currentUserId: string) => {
-    // 安全檢查：如果 themeConfigs 沒有該主題的設定，給予預設值或跳過
+    // Safety check: If themeConfigs doesn't have settings for this theme, use default or skip
     const config = themeConfigs[theme] || themeConfigs['rainy']; 
     
-    // 對應 Server 回傳的 users 狀態與前端的 objects 設定
+    // Map Server returned users status to frontend objects settings
     const objectsWithState = config.objects.map(obj => {
-      // 假設 user.object_id 對應 config.objects 裡的 id
-      // 這裡有一個簡單的配對邏輯：如果後端 user 列表有這個 object_id，就代表被佔用了
+      // Assuming user.object_id corresponds to id in config.objects
+      // Simple matching logic: If backend user list has this object_id, it is taken
       const user = users.find(u => u.object_id === obj.id);
       
-      // 注意：這是一個簡單的 Hack，真實情況可能需要更嚴謹的分配邏輯
-      // 這裡假設後端會分配 "cat", "window" 等 id 給使用者
-      // 如果你的後端是用 0, 1, 2 索引，這裡需要修改
+      // Note: This is a simple hack. Real scenarios might need stricter assignment logic
+      // Assuming backend assigns ids like "cat", "window" to users
+      // If your backend uses 0, 1, 2 indices, modify here
       
       return {
         ...obj,
@@ -259,7 +259,7 @@ export default function Home() {
   };
 
   const handleObjectClick = async (objectId: string, isMe: boolean) => {
-    // 這裡我們允許點擊自己的物件
+    // We allow clicking on one's own object
     if (!isMe || !room) return;
     try {
       await fetch(`/api/rooms/${room.id}/toggle`, {
@@ -267,7 +267,7 @@ export default function Home() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId }),
       });
-      // 樂觀更新 UI
+      // Optimistic UI update
       setObjects(prev => prev.map(obj => obj.id === objectId ? { ...obj, isActive: !obj.isActive } : obj));
     } catch (err) { console.error(err); }
   };
@@ -291,7 +291,7 @@ export default function Home() {
     return <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white animate-pulse">Loading...</div>;
   }
 
-  // --- 渲染房間 (Room View) ---
+  // --- Render Room (Room View) ---
   if (view === 'room' && room) {
     const config = themeConfigs[room.theme] || themeConfigs['rainy'];
 
@@ -306,7 +306,7 @@ export default function Home() {
           roomCreatedAt={room.created_at}
         />
 
-        {/* 控制按鈕 UI */}
+        {/* Control Button UI */}
         <div className="absolute top-6 right-6 flex gap-3 z-50">
           <button onClick={() => setIsMuted(!isMuted)} className="w-12 h-12 rounded-full bg-black/50 hover:bg-black/70 text-2xl border-2 border-white/20 flex items-center justify-center transition-all">
             {isMuted ? '🔇' : '🔊'}
@@ -323,24 +323,24 @@ export default function Home() {
           </div>
         </div>
 
-        {/* 遊戲視窗容器 (16:9 比例) */}
+        {/* Game Window Container (16:9 Ratio) */}
         <div className="relative w-full max-w-6xl aspect-video bg-[#1a1a1a] shadow-2xl overflow-hidden border-4 border-gray-800 rounded-lg">
             
-            {/* 1. 背景層 */}
+            {/* 1. Background Layer */}
             <div 
               className="absolute inset-0 w-full h-full"
               style={{
                 backgroundImage: config.bgImage ? `url('${config.bgImage}')` : undefined,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
-                imageRendering: 'pixelated', // 像素風關鍵
+                imageRendering: 'pixelated', // Key for pixel art style
               }}
             >
-                {/* 如果沒有背景圖，顯示預設顏色 */}
+                {/* If no background image, show default color */}
                 {!config.bgImage && <div className={`w-full h-full ${config.bgClass}`} />}
             </div>
 
-            {/* 2. 物件層 */}
+            {/* 2. Object Layer */}
             {objects.map((obj) => (
                 <div
                     key={obj.id}
@@ -354,13 +354,13 @@ export default function Home() {
                         left: obj.position.left,
                         width: obj.size.width,
                         height: obj.size.height,
-                        transform: 'translate(-50%, -50%)', // 讓定位點在物件中心
+                        transform: 'translate(-50%, -50%)', // Center the positioning point
                     }}
                 >
-                    {/* 核心邏輯修改：
-                        不切換圖片，而是用 CSS Filter 來表示「未啟動」。
-                        未啟動 = 變暗 + 黑白
-                        啟動 = 原色 + 正常亮度
+                    {/* Core logic change:
+                        Do not switch images, use CSS Filter to indicate "inactive".
+                        Inactive = Darkened + Grayscale
+                        Active = Original color + Normal brightness
                      */}
                     {obj.imagePath && (
                         <img 
@@ -373,7 +373,7 @@ export default function Home() {
                         />
                     )}
 
-                    {/* 自己控制的物件會有一個指示器 */}
+                    {/* Indicator for object controlled by self */}
                     {obj.isMe && (
                         <div className="absolute -top-8 left-1/2 -translate-x-1/2">
                             <span className="bg-blue-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold shadow-lg animate-bounce">
@@ -388,10 +388,10 @@ export default function Home() {
     );
   }
 
-  // --- 著陸頁 (Landing View) ---
+  // --- Landing Page (Landing View) ---
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white relative overflow-hidden">
-        {/* Landing Page UI 保持不變 */}
+        {/* Landing Page UI remains unchanged */}
         <div className="z-10 text-center space-y-8">
             <h1 className="text-6xl md:text-8xl font-black tracking-tighter mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
                 Co-Fi
@@ -409,13 +409,13 @@ export default function Home() {
             {error && <p className="text-red-400 mt-4 bg-red-900/20 py-2 rounded">{error}</p>}
         </div>
 
-        {/* 這裡保留你的 Modal 程式碼 (Create Room / Join Room) */}
+        {/* Keeping your Modal code (Create Room / Join Room) */}
         {showModal && (
             <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
                 <div className="bg-gray-800 p-8 rounded-2xl max-w-4xl w-full border border-gray-700">
                     <h2 className="text-3xl font-bold mb-6 text-center">Select Vibe</h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                        {/* 這裡只讓 Rainy Room 能點擊 */}
+                        {/* Only allow clicking on Rainy Room */}
                         <ThemeCard 
                             title="Rainy Room" icon="🌧️" theme="rainy" 
                             description="Chill beats & Rain" 
