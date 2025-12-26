@@ -72,7 +72,8 @@ const themeConfigs = {
        { 
         id: 'window', 
         name: 'Rain Window',
-        imagePath: '', // Windows usually don't need an image, just a hit area
+        imagePath: '/assets/window-raining.gif', 
+        soundPath: '/sounds/rainy/window-raining.wav',
         position: { top: '35%', left: '20%' }, 
         size: { width: 300, height: 300 }
       },
