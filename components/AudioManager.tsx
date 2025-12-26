@@ -2,17 +2,26 @@
 
 import { useEffect, useRef, useState } from 'react';
 
+interface InteractiveObject {
+  id: string;
+  name: string;
+  imagePath: string;
+  soundPath?: string;
+  isActive: boolean;
+}
+
 interface AudioManagerProps {
   theme: 'rainy' | 'midnight' | 'forest';
-  activeObjects: { [key: string]: boolean };
+  objects: InteractiveObject[];
   isMuted: boolean;
   roomCreatedAt: string;
 }
 
-export default function AudioManager({ theme, activeObjects, isMuted, roomCreatedAt }: AudioManagerProps) {
+export default function AudioManager({ theme, objects, isMuted, roomCreatedAt }: AudioManagerProps) {
   const backgroundAudioRef = useRef<HTMLAudioElement | null>(null);
   const objectAudiosRef = useRef<{ [key: string]: HTMLAudioElement }>({});
   const [isInitialized, setIsInitialized] = useState(false);
+  const [blocked, setBlocked] = useState(false);
 
   // Calculate synchronized playback position based on room creation time
   const getSyncedPlaybackTime = (audio: HTMLAudioElement) => {
@@ -24,6 +33,20 @@ export default function AudioManager({ theme, activeObjects, isMuted, roomCreate
       return elapsed % audio.duration;
     }
     return 0;
+  };
+
+  // Helper to resume/play audio manually
+  const resumeAudio = () => {
+    if (backgroundAudioRef.current) {
+        const bgAudio = backgroundAudioRef.current;
+        const syncTime = getSyncedPlaybackTime(bgAudio);
+        // Only set time if significant drift or not started
+        if (Math.abs(bgAudio.currentTime - syncTime) > 1) {
+            bgAudio.currentTime = syncTime;
+        }
+        bgAudio.play().catch(console.error);
+    }
+    setBlocked(false);
   };
 
   // Initialize and start audio immediately when entering room
@@ -38,13 +61,13 @@ export default function AudioManager({ theme, activeObjects, isMuted, roomCreate
     backgroundAudioRef.current = bgAudio;
 
     // Pre-load object sounds
-    const objectKeys = Object.keys(activeObjects);
-    objectKeys.forEach(key => {
-      const audio = new Audio(`/sounds/${theme}/${key}.mp3`);
+    objects.forEach(obj => {
+      if (!obj.soundPath) return;
+      const audio = new Audio(obj.soundPath);
       audio.loop = true;
       audio.volume = 0.7;
       audio.muted = isMuted;
-      objectAudiosRef.current[key] = audio;
+      objectAudiosRef.current[obj.id] = audio;
     });
 
     // Wait for audio metadata to load, then sync playback position
@@ -59,26 +82,25 @@ export default function AudioManager({ theme, activeObjects, isMuted, roomCreate
     
     if (playPromise !== undefined) {
       playPromise.catch(err => {
-        console.log('Background music autoplay blocked by browser, will play on first user interaction');
+        console.log('Background music autoplay blocked by browser.');
+        setBlocked(true);
         
-        // Fallback: play on first user interaction
-        const playAudio = () => {
-          const syncTime = getSyncedPlaybackTime(bgAudio);
-          bgAudio.currentTime = syncTime;
-          bgAudio.play().catch(e => console.log('Audio play error:', e));
-          document.removeEventListener('click', playAudio);
-          document.removeEventListener('keydown', playAudio);
-          document.removeEventListener('touchstart', playAudio);
+        // Fallback: also listen for global clicks just in case user ignores overlay
+        const autoResume = () => {
+          resumeAudio();
+          document.removeEventListener('click', autoResume);
+          document.removeEventListener('keydown', autoResume);
+          document.removeEventListener('touchstart', autoResume);
         };
         
-        document.addEventListener('click', playAudio, { once: true });
-        document.addEventListener('keydown', playAudio, { once: true });
-        document.addEventListener('touchstart', playAudio, { once: true });
+        document.addEventListener('click', autoResume, { once: true });
+        document.addEventListener('keydown', autoResume, { once: true });
+        document.addEventListener('touchstart', autoResume, { once: true });
       });
     }
 
     setIsInitialized(true);
-  }, [theme, activeObjects, isMuted, isInitialized, roomCreatedAt]);
+  }, [theme, objects, isMuted, isInitialized, roomCreatedAt]);
 
   // Handle mute/unmute
   useEffect(() => {
@@ -95,18 +117,18 @@ export default function AudioManager({ theme, activeObjects, isMuted, roomCreate
   useEffect(() => {
     if (!isInitialized) return;
 
-    Object.entries(activeObjects).forEach(([objectId, isActive]) => {
-      const audio = objectAudiosRef.current[objectId];
+    objects.forEach((obj) => {
+      const audio = objectAudiosRef.current[obj.id];
       if (!audio) return;
 
-      if (isActive) {
+      if (obj.isActive) {
         audio.play().catch(err => console.log('Object sound play error:', err));
       } else {
         audio.pause();
         audio.currentTime = 0;
       }
     });
-  }, [activeObjects, isInitialized]);
+  }, [objects, isInitialized]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -123,5 +145,17 @@ export default function AudioManager({ theme, activeObjects, isMuted, roomCreate
     };
   }, []);
 
-  return null;
+  if (!blocked) return null;
+
+  return (
+    <div 
+        className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm cursor-pointer"
+        onClick={resumeAudio}
+    >
+        <div className="bg-white/10 p-6 rounded-full border-2 border-white/30 hover:scale-110 transition-transform animate-pulse">
+            <span className="text-4xl">▶️</span>
+        </div>
+        <p className="absolute bottom-1/4 text-white/80 font-mono text-sm uppercase tracking-widest">Click to Start Audio</p>
+    </div>
+  );
 }
