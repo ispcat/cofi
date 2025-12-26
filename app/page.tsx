@@ -60,7 +60,7 @@ const themeConfigs = {
       { 
         id: 'computer', 
         name: 'Computer',
-        imagePath: '', // Place computer.gif here later
+        imagePath: '/assets/computer-running.gif', 
         position: { top: '42%', left: '55%' }, // Left side of the table
         size: { width: 120, height: 120 }
       },
