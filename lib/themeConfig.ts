@@ -44,6 +44,22 @@ export const themeConfigs: ThemeConfigs = {
         size: { width: "38.6%" },
       },
     ],
+    decorations: [
+      {
+        id: "keyboard",
+        name: "Keyboard",
+        imagePath: "/assets/rainy/keyboard.png",
+        position: { top: "54%", left: "55%" },
+        size: { width: "15%" },
+      },
+      {
+        id: "chair",
+        name: "Chair",
+        imagePath: "/assets/rainy/chair.png",
+        position: { top: "75%", left: "57%" },
+        size: { width: "14%" },
+      },
+    ],
   },
   // Keep other rooms as is for now, update later
   midnight: {

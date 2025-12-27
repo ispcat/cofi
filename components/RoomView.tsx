@@ -84,13 +84,33 @@ export default function RoomView({
           }}
         >
           {/* If no background image, show default color */}
-          {!config.bgImage && (
-            <div className={`w-full h-full ${config.bgClass}`} />
-          )}
-        </div>
-
-        {/* 2. Object Layer */}
-        {objects.map((obj) => (
+                      {!config.bgImage && (
+                        <div className={`w-full h-full ${config.bgClass}`} />
+                      )}
+                    </div>
+          
+                    {/* 1.5. Decoration Layer (Static) */}
+                    {config.decorations?.map((dec) => (
+                      <div
+                        key={dec.id}
+                        className="absolute pointer-events-none select-none z-0"
+                        style={{
+                          top: dec.position.top,
+                          left: dec.position.left,
+                          width: dec.size.width,
+                          transform: "translate(-50%, -50%)",
+                        }}
+                      >
+                        <img
+                          src={dec.imagePath}
+                          alt={dec.name}
+                          className="w-full h-full object-contain"
+                          style={{ imageRendering: "pixelated" }}
+                        />
+                      </div>
+                    ))}
+          
+                    {/* 2. Object Layer */}        {objects.map((obj) => (
           <div
             key={obj.id}
             onClick={() => handleObjectClick(obj.id, obj.isMe)}

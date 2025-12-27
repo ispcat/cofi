@@ -30,6 +30,13 @@ export interface ThemeConfig {
   bgImage: string;
   bgClass: string;
   objects: Omit<InteractiveObject, "isActive" | "isMe" | "isAssigned">[];
+  decorations?: {
+    id: string;
+    name: string;
+    imagePath: string;
+    position: { top: string; left: string };
+    size: { width: string };
+  }[];
 }
 
 export type ThemeConfigs = Record<string, ThemeConfig>;
