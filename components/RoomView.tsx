@@ -53,10 +53,19 @@ export default function RoomView({
         </button>
       </div>
 
-      <div className="absolute top-6 left-6 z-50">
-        <div className="bg-black/60 backdrop-blur px-4 py-2 rounded-xl border border-white/10 text-white">
-          <h1 className="font-bold">{config.name}</h1>
-          <p className="text-xs opacity-70">Room: {room.id}</p>
+      <div className="absolute top-6 left-6 z-50 font-mono select-none">
+        <div className="bg-black/80 border-2 border-white/40 h-14 flex items-center px-4 gap-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.8)]">
+          <div className="flex flex-col justify-center border-r border-white/20 pr-4 h-full">
+            <h1 className="font-bold text-xs uppercase tracking-widest text-blue-300">
+              {config.name}
+            </h1>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-[10px] uppercase text-white/50 tracking-wider">ID</span>
+            <span className="font-bold text-xl text-yellow-400 tracking-[0.1em] select-all cursor-text bg-white/5 px-2 py-0.5 border border-white/10">
+              {room.id}
+            </span>
+          </div>
         </div>
       </div>
 
