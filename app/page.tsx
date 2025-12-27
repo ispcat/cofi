@@ -258,6 +258,7 @@ export default function Home() {
       setShowJoinInput(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error");
+    } finally {
       setIsLoading(false);
     }
   };
