@@ -103,27 +103,27 @@ export default function RoomView({
                         Active = Original color + Normal brightness
                      */}
             {obj.imagePath && (
-              <GifObject
-                src={obj.imagePath}
-                alt={obj.name}
-                isActive={obj.isActive}
-                className={`w-full h-full object-contain transition-all duration-500
-                                ${
-                                  obj.isActive
-                                    ? "grayscale-0 opacity-100 drop-shadow-lg"
-                                    : "grayscale opacity-50 contrast-125"
-                                }
-                            `}
-                style={{ imageRendering: "pixelated" }}
-              />
-            )}
-
-            {/* Indicator for object controlled by self */}
-            {obj.isMe && (
-              <div className="absolute -top-8 left-1/2 -translate-x-1/2">
-                <span className="bg-blue-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold shadow-lg animate-bounce">
-                  YOU
-                </span>
+              <div className="relative w-full h-full overflow-visible">
+                <GifObject
+                  src={obj.imagePath}
+                  alt={obj.name}
+                  isActive={obj.isActive}
+                  className={`relative w-full h-full object-contain transition-all duration-500 z-10
+                                  ${
+                                    obj.isActive
+                                      ? "grayscale-0 opacity-100"
+                                      : "grayscale opacity-50 contrast-125"
+                                  }
+                                  ${
+                                    obj.isMe
+                                      ? "drop-shadow-[0_0_4px_rgba(60,130,250,1)] brightness-110"
+                                      : obj.isActive
+                                      ? "drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]"
+                                      : ""
+                                  }
+                              `}
+                  style={{ imageRendering: "pixelated" }}
+                />
               </div>
             )}
           </div>
