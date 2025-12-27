@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.5](https://github.com/ispcat/cofi/compare/v1.0.4...v1.0.5) (2025-12-27)
+
+
+### Bug Fixes
+
+* favicon layout ([#17](https://github.com/ispcat/cofi/issues/17)) ([570f8e9](https://github.com/ispcat/cofi/commit/570f8e92e5c88f42f72d2aac7443aa58732ad31e))
+
 ## [1.0.3](https://github.com/ispcat/cofi/compare/v1.0.2...v1.0.3) (2025-12-27)
 
 
