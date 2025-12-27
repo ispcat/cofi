@@ -32,7 +32,7 @@ export default function LandingView({
       <div className="absolute inset-0 z-0 bg-black/60" />
 
       {/* 3. 內容層 */}
-      <div className="z-10 flex flex-col items-center justify-center w-full max-w-5xl px-4">
+      <div className="z-10 flex flex-col items-center justify-center w-full max-w-5xl px-4 -mt-20 md:-mt-32">
         
         {/* --- Logo 區域 --- */}
         <img
