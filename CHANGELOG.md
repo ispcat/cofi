@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/ispcat/cofi/compare/v1.0.1...v1.0.2) (2025-12-27)
+
+
+### Bug Fixes
+
+* set loading states back when exit room ([#10](https://github.com/ispcat/cofi/issues/10)) ([3ee27b2](https://github.com/ispcat/cofi/commit/3ee27b24fae5b2dc1db5e15d5c133d1dca84994c))
+
 ## [1.0.1](https://github.com/ispcat/cofi/compare/v1.0.0...v1.0.1) (2025-12-26)
 
 
