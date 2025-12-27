@@ -22,6 +22,14 @@ export default function RoomView({
   handleLeaveRoom,
   handleObjectClick,
 }: RoomViewProps) {
+  const [copied, setCopied] = React.useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(room.id);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <div
       className={`min-h-screen relative overflow-hidden flex items-center justify-center bg-black`}
@@ -62,9 +70,15 @@ export default function RoomView({
           </div>
           <div className="flex items-center gap-3">
             <span className="text-[10px] uppercase text-white/50 tracking-wider">ID</span>
-            <span className="font-bold text-xl text-yellow-400 tracking-[0.1em] select-all cursor-text bg-white/5 px-2 py-0.5 border border-white/10">
-              {room.id}
-            </span>
+            <button 
+              onClick={handleCopy}
+              className={`font-bold text-xl tracking-[0.1em] cursor-pointer bg-white/5 px-2 py-0.5 border border-white/10 transition-all active:scale-95
+                ${copied ? "text-green-400 border-green-400/50" : "text-yellow-400 hover:bg-white/10"}
+              `}
+              title="Click to copy Room ID"
+            >
+              {copied ? "COPIED" : room.id}
+            </button>
           </div>
         </div>
       </div>
