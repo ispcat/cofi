@@ -4,13 +4,13 @@ export const themeConfigs: ThemeConfigs = {
   rainy: {
     name: "Rainy Room",
     // Using style attribute to directly load the image
-    bgImage: "/assets/rainy/bg-main2.png",
+    bgImage: "/assets/rainy/bg-main2_compressed.png",
     bgClass: "bg-slate-900", // fallback color
     objects: [
       {
         id: "cat",
         name: "Cat",
-        imagePath: "/assets/rainy/cat-strip.gif",
+        imagePath: "/assets/rainy/cat-strip_compressed.gif",
         soundPath: "/sounds/rainy/cat-strip.wav",
         // Based on the new background, the cat is around the carpet area
         position: { top: "68%", left: "33%" },
@@ -20,7 +20,7 @@ export const themeConfigs: ThemeConfigs = {
       {
         id: "kettle",
         name: "Kettle",
-        imagePath: "/assets/rainy/kettle-boiling.gif",
+        imagePath: "/assets/rainy/kettle-boiling_compressed.gif",
         soundPath: "/sounds/rainy/kettle-boiling.wav",
         position: { top: "50%", left: "72%" }, // Right side of the table
         size: { width: "15%" },
@@ -29,7 +29,7 @@ export const themeConfigs: ThemeConfigs = {
       {
         id: "computer",
         name: "Computer",
-        imagePath: "/assets/rainy/computer-running.gif",
+        imagePath: "/assets/rainy/computer-running_compressed.gif",
         soundPath: "/sounds/rainy/computer-running.wav",
         position: { top: "37%", left: "62%" }, // Left side of the table
         size: { width: "17%" },
@@ -38,7 +38,7 @@ export const themeConfigs: ThemeConfigs = {
       {
         id: "window",
         name: "Rain Window",
-        imagePath: "/assets/rainy/window-raining2.gif",
+        imagePath: "/assets/rainy/window-raining2_compressed.gif",
         soundPath: "/sounds/rainy/window-raining.wav",
         position: { top: "29.4%", left: "24%" },
         size: { width: "38.6%" },
@@ -48,14 +48,14 @@ export const themeConfigs: ThemeConfigs = {
       {
         id: "keyboard",
         name: "Keyboard",
-        imagePath: "/assets/rainy/keyboard.png",
+        imagePath: "/assets/rainy/keyboard_compressed.png",
         position: { top: "48%", left: "57%" },
         size: { width: "8%" },
       },
       {
         id: "chair",
         name: "Chair",
-        imagePath: "/assets/rainy/chair.png",
+        imagePath: "/assets/rainy/chair_compressed.png",
         position: { top: "66%", left: "53%" },
         size: { width: "25%" },
       },
