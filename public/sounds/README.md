@@ -6,10 +6,10 @@ Place your sound files in the following structure:
 public/sounds/
 ├── rainy/
 │   ├── background.mp3      # Background music for rainy theme
-│   ├── window.mp3          # Sound when window is active
-│   ├── lamp.mp3            # Sound when lamp is active
-│   ├── plant.mp3           # Sound when plant is active
-│   └── book.mp3            # Sound when book is active
+│   ├── window.mp3          # Sound when window
+│   ├── lamp.mp3            # Sound when lamp
+│   ├── plant.mp3           # Sound when plant
+│   └── book.mp3            # Sound when book
 ├── midnight/
 │   ├── background.mp3
 │   ├── neon.mp3

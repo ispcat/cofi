@@ -258,6 +258,7 @@ export default function Home() {
       setShowJoinInput(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error");
+    } finally {
       setIsLoading(false);
     }
   };
@@ -459,13 +460,16 @@ export default function Home() {
             Create Room
           </button>
           <button
-            onClick={() => setShowJoinInput(true)}
+            onClick={() => {
+              setError("");
+              setShowJoinInput(true);
+            }}
             className="px-8 py-4 border-2 border-white/20 font-bold rounded-full hover:bg-white/10 transition-colors"
           >
             Join Room
           </button>
         </div>
-        {error && (
+        {error && !showJoinInput && (
           <p className="text-red-400 mt-4 bg-red-900/20 py-2 rounded">
             {error}
           </p>
@@ -535,6 +539,11 @@ export default function Home() {
               placeholder="ABCD"
               className="w-full bg-gray-900 border border-gray-600 rounded-lg py-4 text-center text-3xl tracking-[1em] font-mono mb-6 focus:outline-none focus:border-blue-500"
             />
+            {error && (
+              <p className="text-red-400 mb-6 bg-red-900/20 py-2 rounded text-center">
+                {error}
+              </p>
+            )}
             <div className="flex gap-3">
               <button
                 type="button"
