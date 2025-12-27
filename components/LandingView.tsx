@@ -44,14 +44,14 @@ export default function LandingView({
 
         {/* --- 副標題 --- */}
         <p
-          className="text-orange-100 text-center text-lg md:text-2xl font-bold tracking-widest drop-shadow-md z-20 -mt-10 md:-mt-20"
+          className="text-orange-100 text-center text-lg md:text-2xl font-bold tracking-widest drop-shadow-md z-20 -mt-28 md:-mt-40"
           style={{ fontFamily: "'Courier New', Courier, monospace", textShadow: "2px 2px 0px #000" }}
         >
           Collaborative Lofi Music Generator
         </p>
 
         {/* --- 按鈕區域 (RWD 自適應版本) --- */}
-        <div className="flex flex-col md:flex-row items-center justify-center gap-5 md:gap-8 mt-8 w-full">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-4 mt-4 w-full">
           
           {/* Create Room Button */}
           <button
