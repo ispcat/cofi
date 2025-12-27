@@ -22,6 +22,14 @@ export default function RoomView({
   handleLeaveRoom,
   handleObjectClick,
 }: RoomViewProps) {
+  const [copied, setCopied] = React.useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(room.id);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <div
       className={`min-h-screen relative overflow-hidden flex items-center justify-center bg-black`}
@@ -34,25 +42,44 @@ export default function RoomView({
       />
 
       {/* Control Button UI */}
-      <div className="absolute top-6 right-6 flex gap-3 z-50">
+      <div className="absolute top-6 right-6 flex gap-4 z-50">
         <button
           onClick={() => setIsMuted(!isMuted)}
-          className="w-12 h-12 rounded-full bg-black/50 hover:bg-black/70 text-2xl border-2 border-white/20 flex items-center justify-center transition-all"
+          className="hover:scale-110 transition-transform focus:outline-none"
         >
-          {isMuted ? "🔇" : "🔊"}
+          <img 
+            src={isMuted ? "/assets/mute.png" : "/assets/unmute.png"} 
+            alt={isMuted ? "Unmute" : "Mute"} 
+            className="w-14 h-14 drop-shadow-md"
+          />
         </button>
         <button
           onClick={handleLeaveRoom}
-          className="w-12 h-12 rounded-full bg-red-900/50 hover:bg-red-900/70 text-xl border-2 border-white/20 flex items-center justify-center transition-all"
+          className="hover:scale-110 transition-transform focus:outline-none"
         >
-          🚪
+          <img src="/assets/exit.png" alt="Leave Room" className="w-14 h-14 drop-shadow-md" />
         </button>
       </div>
 
-      <div className="absolute top-6 left-6 z-50">
-        <div className="bg-black/60 backdrop-blur px-4 py-2 rounded-xl border border-white/10 text-white">
-          <h1 className="font-bold">{config.name}</h1>
-          <p className="text-xs opacity-70">Room: {room.id}</p>
+      <div className="absolute top-6 left-6 z-50 font-mono select-none">
+        <div className="bg-black/80 border-2 border-white/40 h-14 flex items-center px-4 gap-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.8)]">
+          <div className="flex flex-col justify-center border-r border-white/20 pr-4 h-full">
+            <h1 className="font-bold text-xs uppercase tracking-widest text-blue-300">
+              {config.name}
+            </h1>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-[10px] uppercase text-white/50 tracking-wider">ID</span>
+            <button 
+              onClick={handleCopy}
+              className={`font-bold text-xl tracking-[0.1em] cursor-pointer bg-white/5 px-2 py-0.5 border border-white/10 transition-all active:scale-95
+                ${copied ? "text-green-400 border-green-400/50" : "text-yellow-400 hover:bg-white/10"}
+              `}
+              title="Click to copy Room ID"
+            >
+              {copied ? "COPIED" : room.id}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -71,13 +98,33 @@ export default function RoomView({
           }}
         >
           {/* If no background image, show default color */}
-          {!config.bgImage && (
-            <div className={`w-full h-full ${config.bgClass}`} />
-          )}
-        </div>
-
-        {/* 2. Object Layer */}
-        {objects.map((obj) => (
+                      {!config.bgImage && (
+                        <div className={`w-full h-full ${config.bgClass}`} />
+                      )}
+                    </div>
+          
+                    {/* 1.5. Decoration Layer (Static) */}
+                    {config.decorations?.map((dec) => (
+                      <div
+                        key={dec.id}
+                        className="absolute pointer-events-none select-none z-0"
+                        style={{
+                          top: dec.position.top,
+                          left: dec.position.left,
+                          width: dec.size.width,
+                          transform: "translate(-50%, -50%)",
+                        }}
+                      >
+                        <img
+                          src={dec.imagePath}
+                          alt={dec.name}
+                          className="w-full h-full object-contain"
+                          style={{ imageRendering: "pixelated" }}
+                        />
+                      </div>
+                    ))}
+          
+                    {/* 2. Object Layer */}        {objects.map((obj) => (
           <div
             key={obj.id}
             onClick={() => handleObjectClick(obj.id, obj.isMe)}
@@ -103,27 +150,27 @@ export default function RoomView({
                         Active = Original color + Normal brightness
                      */}
             {obj.imagePath && (
-              <GifObject
-                src={obj.imagePath}
-                alt={obj.name}
-                isActive={obj.isActive}
-                className={`w-full h-full object-contain transition-all duration-500
-                                ${
-                                  obj.isActive
-                                    ? "grayscale-0 opacity-100 drop-shadow-lg"
-                                    : "grayscale opacity-50 contrast-125"
-                                }
-                            `}
-                style={{ imageRendering: "pixelated" }}
-              />
-            )}
-
-            {/* Indicator for object controlled by self */}
-            {obj.isMe && (
-              <div className="absolute -top-8 left-1/2 -translate-x-1/2">
-                <span className="bg-blue-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold shadow-lg animate-bounce">
-                  YOU
-                </span>
+              <div className="relative w-full h-full overflow-visible">
+                <GifObject
+                  src={obj.imagePath}
+                  alt={obj.name}
+                  isActive={obj.isActive}
+                  className={`relative w-full h-full object-contain transition-all duration-500 z-10
+                                  ${
+                                    obj.isActive
+                                      ? "grayscale-0 opacity-100"
+                                      : "grayscale opacity-50 contrast-125"
+                                  }
+                                  ${
+                                    obj.isMe
+                                      ? "drop-shadow-[0_0_4px_rgba(60,130,250,1)] brightness-110"
+                                      : obj.isActive
+                                      ? "drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]"
+                                      : ""
+                                  }
+                              `}
+                  style={{ imageRendering: "pixelated" }}
+                />
               </div>
             )}
           </div>

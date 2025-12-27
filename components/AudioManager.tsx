@@ -149,13 +149,15 @@ export default function AudioManager({ theme, objects, isMuted, roomCreatedAt }:
 
   return (
     <div 
-        className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm cursor-pointer"
+        className="fixed inset-0 z-[60] flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm cursor-pointer"
         onClick={resumeAudio}
     >
-        <div className="bg-white/10 p-6 rounded-full border-2 border-white/30 hover:scale-110 transition-transform animate-pulse">
-            <span className="text-4xl">▶️</span>
-        </div>
-        <p className="absolute bottom-1/4 text-white/80 font-mono text-sm uppercase tracking-widest">Click to Start Audio</p>
+        <img 
+            src="/assets/play.png" 
+            alt="Click to Start Audio" 
+            className="w-24 h-24 hover:scale-110 transition-transform animate-pulse mb-4"
+        />
+        <p className="text-white/80 font-mono text-sm uppercase tracking-widest drop-shadow-md">Click to Start Audio</p>
     </div>
   );
 }
