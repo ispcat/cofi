@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/ispcat/cofi/compare/v1.0.2...v1.0.3) (2025-12-27)
+
+
+### Bug Fixes
+
+* active object highlight ([#13](https://github.com/ispcat/cofi/issues/13)) ([40c2209](https://github.com/ispcat/cofi/commit/40c2209bd561b86fb1531605ceaa9dc7bdfbfe4f))
+
 ## [1.0.2](https://github.com/ispcat/cofi/compare/v1.0.1...v1.0.2) (2025-12-27)
 
 
