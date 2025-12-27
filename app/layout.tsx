@@ -2,8 +2,11 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Cofi - Ambient Rooms',
-  description: 'Create and join ambient rooms with friends',
+  title: 'Cofi - Collaborative Lofi Music',
+  description: 'Collaborative Lofi Music',
+  icons: {
+    icon: '/favicon.png',
+  },
 };
 
 export default function RootLayout({

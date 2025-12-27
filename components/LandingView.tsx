@@ -45,7 +45,7 @@ export default function LandingView({
           className="text-orange-100 text-center text-lg md:text-2xl font-bold tracking-widest drop-shadow-md z-20 -mt-28 md:-mt-40"
           style={{ fontFamily: "'Courier New', Courier, monospace", textShadow: "2px 2px 0px #000" }}
         >
-          Collaborative Lofi Music Generator
+          Collaborative Lofi Music
         </p>
 
         {/* --- Button Area (Responsive) --- */}
