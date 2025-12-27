@@ -32,7 +32,7 @@ export default function LandingView({
       <div className="absolute inset-0 z-0 bg-black/60" />
 
       {/* 3. 內容層 */}
-      <div className="z-10 flex flex-col items-center justify-center w-full max-w-5xl px-4 -mt-10">
+      <div className="z-10 flex flex-col items-center justify-center w-full max-w-5xl px-4">
         
         {/* --- Logo 區域 --- */}
         <img
@@ -43,9 +43,8 @@ export default function LandingView({
         />
 
         {/* --- 副標題 --- */}
-        {/* 保留你覺得順眼的 -mt-44，這會抵銷 Logo 圖片下方的透明留白 */}
         <p
-          className="-mt-44 text-orange-100 text-center text-lg md:text-2xl font-bold tracking-widest drop-shadow-md z-20"
+          className="text-orange-100 text-center text-lg md:text-2xl font-bold tracking-widest drop-shadow-md z-20 -mt-10 md:-mt-20"
           style={{ fontFamily: "'Courier New', Courier, monospace", textShadow: "2px 2px 0px #000" }}
         >
           Collaborative Lofi Music Generator
