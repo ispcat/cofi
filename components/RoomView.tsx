@@ -34,18 +34,22 @@ export default function RoomView({
       />
 
       {/* Control Button UI */}
-      <div className="absolute top-6 right-6 flex gap-3 z-50">
+      <div className="absolute top-6 right-6 flex gap-4 z-50">
         <button
           onClick={() => setIsMuted(!isMuted)}
-          className="w-12 h-12 rounded-full bg-black/50 hover:bg-black/70 text-2xl border-2 border-white/20 flex items-center justify-center transition-all"
+          className="hover:scale-110 transition-transform focus:outline-none"
         >
-          {isMuted ? "🔇" : "🔊"}
+          <img 
+            src={isMuted ? "/assets/mute.png" : "/assets/unmute.png"} 
+            alt={isMuted ? "Unmute" : "Mute"} 
+            className="w-14 h-14 drop-shadow-md"
+          />
         </button>
         <button
           onClick={handleLeaveRoom}
-          className="w-12 h-12 rounded-full bg-red-900/50 hover:bg-red-900/70 text-xl border-2 border-white/20 flex items-center justify-center transition-all"
+          className="hover:scale-110 transition-transform focus:outline-none"
         >
-          🚪
+          <img src="/assets/exit.png" alt="Leave Room" className="w-14 h-14 drop-shadow-md" />
         </button>
       </div>
 
