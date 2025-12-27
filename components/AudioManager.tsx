@@ -54,7 +54,7 @@ export default function AudioManager({ theme, objects, isMuted, roomCreatedAt }:
     if (isInitialized) return;
 
     // Create and start background audio
-    const bgAudio = new Audio(`/sounds/${theme}/background.mp3`);
+    const bgAudio = new Audio(`/sounds/room/${theme}/background.mp3`);
     bgAudio.loop = true;
     bgAudio.volume = 0.5;
     bgAudio.muted = isMuted;
@@ -153,7 +153,7 @@ export default function AudioManager({ theme, objects, isMuted, roomCreatedAt }:
         onClick={resumeAudio}
     >
         <img 
-            src="/assets/play.png" 
+            src="/assets/control/play.png" 
             alt="Click to Start Audio" 
             className="w-24 h-24 hover:scale-110 transition-transform animate-pulse mb-4"
         />

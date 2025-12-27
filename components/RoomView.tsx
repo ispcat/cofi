@@ -48,7 +48,7 @@ export default function RoomView({
           className="hover:scale-110 transition-transform focus:outline-none"
         >
           <img 
-            src={isMuted ? "/assets/mute.png" : "/assets/unmute.png"} 
+            src={isMuted ? "/assets/control/mute.png" : "/assets/control/unmute.png"} 
             alt={isMuted ? "Unmute" : "Mute"} 
             className="w-14 h-14 drop-shadow-md"
           />
@@ -57,7 +57,7 @@ export default function RoomView({
           onClick={handleLeaveRoom}
           className="hover:scale-110 transition-transform focus:outline-none"
         >
-          <img src="/assets/exit.png" alt="Leave Room" className="w-14 h-14 drop-shadow-md" />
+          <img src="/assets/control/exit.png" alt="Leave Room" className="w-14 h-14 drop-shadow-md" />
         </button>
       </div>
 

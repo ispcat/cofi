@@ -18,7 +18,7 @@ export default function LandingView({
       <div 
         className="absolute inset-0 z-0"
         style={{
-          backgroundImage: "url('/landing/landing-bg.png')",
+          backgroundImage: "url('/assets/landing/landing-bg.png')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           imageRendering: "pixelated", 
@@ -34,7 +34,7 @@ export default function LandingView({
         
         {/* --- Logo Area --- */}
         <img
-          src="/landing/logo-glow.png"
+          src="/assets/landing/logo-glow.png"
           alt="Co-Fi"
           className="w-[340px] md:w-[480px] drop-shadow-[0_0_25px_rgba(253,224,71,0.6)] animate-pulse"
           style={{ imageRendering: "pixelated" }}
@@ -45,7 +45,7 @@ export default function LandingView({
           className="text-orange-100 text-center text-lg md:text-2xl font-bold tracking-widest drop-shadow-md z-20 -mt-28 md:-mt-40"
           style={{ fontFamily: "'Courier New', Courier, monospace", textShadow: "2px 2px 0px #000" }}
         >
-          Collaborative Lofi Music Generator
+          Collaborative Lofi Music
         </p>
 
         {/* --- Button Area (Responsive) --- */}
@@ -61,7 +61,7 @@ export default function LandingView({
             // max-w-[400px]: Max width to prevent excessive scaling on large screens
             className="w-[60vw] md:w-[22vw] max-w-[400px] aspect-[3/1] bg-contain bg-center bg-no-repeat transition-all hover:scale-105 active:scale-95 hover:brightness-110 filter drop-shadow-xl"
             style={{
-              backgroundImage: "url('/landing/btn-create.png')",
+              backgroundImage: "url('/assets/landing/btn-create.png')",
               imageRendering: "pixelated",
             }}
           >
@@ -73,7 +73,7 @@ export default function LandingView({
             onClick={onShowJoinModal}
             className="w-[60vw] md:w-[22vw] max-w-[400px] aspect-[3/1] bg-contain bg-center bg-no-repeat transition-all hover:scale-105 active:scale-95 hover:brightness-110 filter drop-shadow-xl"
             style={{
-              backgroundImage: "url('/landing/btn-join.png')",
+              backgroundImage: "url('/assets/landing/btn-join.png')",
               imageRendering: "pixelated",
             }}
           >
