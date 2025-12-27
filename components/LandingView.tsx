@@ -52,17 +52,17 @@ export default function LandingView({
         </p>
 
         {/* --- 按鈕區域 (RWD 自適應版本) --- */}
-        <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 mt-6 w-full">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-5 md:gap-8 mt-8 w-full">
           
           {/* Create Room Button */}
           <button
             onClick={onShowCreateModal}
             // 修改說明：
             // w-[60vw]: 手機版佔螢幕寬度 60%
-            // md:w-[28vw]: 電腦版佔螢幕寬度 28%
+            // md:w-[22vw]: 電腦版佔螢幕寬度 22%
             // aspect-[3/1]: 鎖定長寬比為 3:1 (寬3高1)，高度會自動計算
             // max-w-[400px]: 限制最大寬度，避免在超大螢幕變得過大
-            className="w-[60vw] md:w-[15vw] max-w-[400px] aspect-[3/1] bg-contain bg-center bg-no-repeat transition-all hover:scale-105 active:scale-95 hover:brightness-110 filter drop-shadow-xl"
+            className="w-[60vw] md:w-[22vw] max-w-[400px] aspect-[3/1] bg-contain bg-center bg-no-repeat transition-all hover:scale-105 active:scale-95 hover:brightness-110 filter drop-shadow-xl"
             style={{
               backgroundImage: "url('/landing/btn-create.png')",
               imageRendering: "pixelated",
@@ -74,7 +74,7 @@ export default function LandingView({
           {/* Join Room Button */}
           <button
             onClick={onShowJoinModal}
-            className="w-[60vw] md:w-[15vw] max-w-[400px] aspect-[3/1] bg-contain bg-center bg-no-repeat transition-all hover:scale-105 active:scale-95 hover:brightness-110 filter drop-shadow-xl"
+            className="w-[60vw] md:w-[22vw] max-w-[400px] aspect-[3/1] bg-contain bg-center bg-no-repeat transition-all hover:scale-105 active:scale-95 hover:brightness-110 filter drop-shadow-xl"
             style={{
               backgroundImage: "url('/landing/btn-join.png')",
               imageRendering: "pixelated",
