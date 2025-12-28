@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 interface LandingViewProps {
   onShowCreateModal: () => void;
@@ -11,9 +11,59 @@ export default function LandingView({
   onShowJoinModal,
   error,
 }: LandingViewProps) {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = 0.5;
+      audioRef.current.muted = isMuted;
+    }
+  }, [isMuted]);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.play().then(() => {
+        setIsPlaying(true);
+      }).catch(error => {
+        // Autoplay was prevented, user will have to click play.
+        console.error("Autoplay was prevented:", error);
+      });
+    }
+  }, []);
+
+  const togglePlay = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (audioRef.current) {
+      if (isPlaying) {
+        setIsMuted(!isMuted);
+      } else {
+        audioRef.current.play().then(() => {
+          setIsPlaying(true);
+        }).catch(error => {
+          console.error("Playback failed:", error);
+        });
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen relative flex items-center justify-center bg-gray-900 overflow-hidden">
+      <audio ref={audioRef} src="/sounds/landing-music.mp3" loop />
       
+      {/* Music Control Button */}
+      <button 
+        onClick={togglePlay}
+        className="absolute top-5 right-5 w-8 h-8 transition-all duration-300 transform hover:scale-125 hover:brightness-125 cursor-pointer z-50"
+      >
+        <img 
+          src={!isPlaying ? "/assets/control/play_brown.png" : (isMuted ? "/assets/control/mute_brown.png" : "/assets/control/unmute_brown.png")} 
+          alt={!isPlaying ? "Play" : (isMuted ? "Unmute" : "Mute")}
+          style={{ imageRendering: "pixelated" }}
+        />
+      </button>
+
       {/* 1. Background Image Layer */}
       <div 
         className="absolute inset-0 z-0"
