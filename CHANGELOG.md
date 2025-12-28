@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.9](https://github.com/ispcat/cofi/compare/v1.0.8...v1.0.9) (2025-12-28)
+
+
+### Bug Fixes
+
+* mobile rwd ([#24](https://github.com/ispcat/cofi/issues/24)) ([2070d82](https://github.com/ispcat/cofi/commit/2070d82d879e01433b182e5aecf4910d5cb91a8c))
+
 ## [1.0.7](https://github.com/ispcat/cofi/compare/v1.0.6...v1.0.7) (2025-12-28)
 
 
