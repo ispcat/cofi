@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.7](https://github.com/ispcat/cofi/compare/v1.0.6...v1.0.7) (2025-12-28)
+
+
+### Bug Fixes
+
+* UI assets compress ([#21](https://github.com/ispcat/cofi/issues/21)) ([bcea157](https://github.com/ispcat/cofi/commit/bcea1578617bd38a529134da6d10232f32f50a7e))
+
 ## [1.0.6](https://github.com/ispcat/cofi/compare/v1.0.5...v1.0.6) (2025-12-28)
 
 
