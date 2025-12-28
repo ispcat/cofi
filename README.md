@@ -1,4 +1,4 @@
-# Cofi - Ambient Rooms
+# Co-Fi
 
 A minimalist web app for creating and joining ambient rooms with friends. Built with Next.js, TypeScript, and SQLite.
 
