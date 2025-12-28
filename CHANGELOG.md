@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.6](https://github.com/ispcat/cofi/compare/v1.0.5...v1.0.6) (2025-12-28)
+
+
+### Bug Fixes
+
+* room ui ([#19](https://github.com/ispcat/cofi/issues/19)) ([36383b1](https://github.com/ispcat/cofi/commit/36383b1af7b6c736ccb503e6ba78415cb04d4e45))
+
 ## [1.0.5](https://github.com/ispcat/cofi/compare/v1.0.4...v1.0.5) (2025-12-27)
 
 
