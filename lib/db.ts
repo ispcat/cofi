@@ -25,6 +25,13 @@ db.exec(`
   )
 `);
 
+db.exec(`
+  CREATE TABLE IF NOT EXISTS sessions (
+    session_id TEXT PRIMARY KEY,
+    last_seen DATETIME DEFAULT CURRENT_TIMESTAMP
+  )
+`);
+
 export interface Room {
   id: string;
   theme: 'rainy' | 'midnight' | 'forest';
@@ -133,5 +140,44 @@ export function getAvailableObjects(roomId: string, theme: Room['theme']): strin
   // If all objects are taken, allow reassignment (multiple users per object)
   return available.length > 0 ? available : allObjects;
 }
+
+export function updateSessionActivity(sessionId: string): void {
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`DB: Updating session activity for: ${sessionId}`);
+  }
+  const stmt = db.prepare('INSERT INTO sessions (session_id, last_seen) VALUES (?, CURRENT_TIMESTAMP) ON CONFLICT(session_id) DO UPDATE SET last_seen = CURRENT_TIMESTAMP');
+  stmt.run(sessionId);
+}
+
+export function cleanupInactiveSessions(): void {
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('DB: Cleaning up inactive sessions...');
+  }
+  const stmt = db.prepare(`
+    DELETE FROM sessions 
+    WHERE (julianday('now') - julianday(last_seen)) * 86400 > 30
+  `);
+  stmt.run();
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('DB: Inactive sessions cleaned.');
+  }
+}
+
+export function getActiveUserCount(): number {
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('DB: Getting active user count...');
+  }
+  // First, clean up old sessions
+  cleanupInactiveSessions();
+  
+  // Then, count the remaining active sessions
+  const stmt = db.prepare('SELECT COUNT(*) as count FROM sessions');
+  const result = stmt.get() as { count: number };
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`DB: Found ${result.count} active sessions.`);
+  }
+  return result.count;
+}
+
 
 export default db;

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import SessionManager from '@/components/SessionManager';
 
 export const metadata: Metadata = {
   title: 'Cofi - Collaborative Lofi Music',
@@ -16,7 +17,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <SessionManager />
+        {children}
+      </body>
     </html>
   );
 }
