@@ -41,45 +41,49 @@ export default function RoomView({
         roomCreatedAt={room.created_at}
       />
 
-      {/* Control Button UI */}
-      <div className="absolute top-6 right-6 flex gap-4 z-50">
-        <button
-          onClick={() => setIsMuted(!isMuted)}
-          className="hover:scale-110 transition-transform focus:outline-none"
-        >
-          <img 
-            src={isMuted ? "/assets/control/mute.png" : "/assets/control/unmute.png"} 
-            alt={isMuted ? "Unmute" : "Mute"} 
-            className="w-14 h-14 drop-shadow-md"
-          />
-        </button>
-        <button
-          onClick={handleLeaveRoom}
-          className="hover:scale-110 transition-transform focus:outline-none"
-        >
-          <img src="/assets/control/exit.png" alt="Leave Room" className="w-14 h-14 drop-shadow-md" />
-        </button>
-      </div>
+      {/* Top Bar UI Wrapper */}
+      <div className="absolute top-0 left-0 w-full p-6 z-50 flex flex-col items-start gap-4 md:flex-row md:justify-between md:items-center pointer-events-none">
+        {/* Room Info Card */}
+        <div className="pointer-events-auto font-mono select-none">
+          <div className="bg-black/80 border-2 border-white/40 h-14 flex items-center px-4 gap-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.8)]">
+            <div className="flex flex-col justify-center border-r border-white/20 pr-4 h-full">
+              <h1 className="font-bold text-xs uppercase tracking-widest text-blue-300">
+                {config.name}
+              </h1>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="text-[10px] uppercase text-white/50 tracking-wider">ID</span>
+              <button 
+                onClick={handleCopy}
+                className={`font-bold text-xl tracking-[0.1em] cursor-pointer bg-white/5 px-2 py-0.5 border border-white/10 transition-all active:scale-95
+                  ${copied ? "text-green-400 border-green-400/50" : "text-yellow-400 hover:bg-white/10"}
+                `}
+                title="Click to copy Room ID"
+              >
+                {copied ? "COPIED" : room.id}
+              </button>
+            </div>
+          </div>
+        </div>
 
-      <div className="absolute top-6 left-6 z-50 font-mono select-none">
-        <div className="bg-black/80 border-2 border-white/40 h-14 flex items-center px-4 gap-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.8)]">
-          <div className="flex flex-col justify-center border-r border-white/20 pr-4 h-full">
-            <h1 className="font-bold text-xs uppercase tracking-widest text-blue-300">
-              {config.name}
-            </h1>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="text-[10px] uppercase text-white/50 tracking-wider">ID</span>
-            <button 
-              onClick={handleCopy}
-              className={`font-bold text-xl tracking-[0.1em] cursor-pointer bg-white/5 px-2 py-0.5 border border-white/10 transition-all active:scale-95
-                ${copied ? "text-green-400 border-green-400/50" : "text-yellow-400 hover:bg-white/10"}
-              `}
-              title="Click to copy Room ID"
-            >
-              {copied ? "COPIED" : room.id}
-            </button>
-          </div>
+        {/* Control Buttons */}
+        <div className="pointer-events-auto flex gap-4 self-end md:self-auto">
+          <button
+            onClick={() => setIsMuted(!isMuted)}
+            className="hover:scale-110 transition-transform focus:outline-none"
+          >
+            <img 
+              src={isMuted ? "/assets/control/mute.png" : "/assets/control/unmute.png"} 
+              alt={isMuted ? "Unmute" : "Mute"} 
+              className="w-14 h-14 drop-shadow-md"
+            />
+          </button>
+          <button
+            onClick={handleLeaveRoom}
+            className="hover:scale-110 transition-transform focus:outline-none"
+          >
+            <img src="/assets/control/exit.png" alt="Leave Room" className="w-14 h-14 drop-shadow-md" />
+          </button>
         </div>
       </div>
 
