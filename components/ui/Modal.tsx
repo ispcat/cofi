@@ -15,7 +15,7 @@ export default function Modal({ onClose, children, title }: ModalProps) {
       <div
         className="relative w-full max-w-2xl bg-contain bg-center bg-no-repeat p-8"
         style={{
-          backgroundImage: "url('/assets/ui/modal-bg.png')",
+          backgroundImage: "url('/assets/ui/modal-bg_compressed.png')",
           imageRendering: "pixelated",
           backgroundSize: "100% 100%",
         }}
@@ -26,7 +26,7 @@ export default function Modal({ onClose, children, title }: ModalProps) {
             onClick={onClose}
             className="absolute -top-4 -right-4 w-8 h-8 bg-contain bg-center bg-no-repeat hover:scale-110 transition-transform"
             style={{
-              backgroundImage: "url('/assets/ui/close-icon.png')",
+              backgroundImage: "url('/assets/ui/close-icon_compressed.png')",
               imageRendering: "pixelated",
             }}
           >

@@ -14,7 +14,7 @@ export default function PixelatedButton({
       {...props}
       className="w-full h-16 bg-contain bg-center bg-no-repeat transition-all hover:scale-105 active:scale-95 hover:brightness-110 filter drop-shadow-lg"
       style={{
-        backgroundImage: "url('/assets/ui/button-bg.png')",
+        backgroundImage: "url('/assets/ui/button-bg_compressed.png')",
         imageRendering: "pixelated",
         backgroundSize: "100% 100%",
       }}
