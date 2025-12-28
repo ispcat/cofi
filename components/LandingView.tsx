@@ -13,7 +13,30 @@ export default function LandingView({
 }: LandingViewProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const [userCount, setUserCount] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
+
+  useEffect(() => {
+    async function fetchUserCount() {
+      try {
+        const response = await fetch('/api/users/count', { cache: 'no-store' });
+        if (response.ok) {
+          const data = await response.json();
+          setUserCount(data.count);
+        }
+      } catch (error) {
+        console.error('Failed to fetch user count:', error);
+      }
+    }
+
+    // Fetch count immediately on mount
+    fetchUserCount();
+
+    // Then fetch every 5 seconds
+    const intervalId = setInterval(fetchUserCount, 5000);
+
+    return () => clearInterval(intervalId);
+  }, []);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -137,6 +160,14 @@ export default function LandingView({
             {error}
           </div>
         )}
+      </div>
+
+      {/* Live User Count */}
+      <div 
+        className="absolute bottom-5 left-5 text-orange-100 text-lg font-bold"
+        style={{ fontFamily: "'Courier New', Courier, monospace", textShadow: "2px 2px 0px #000" }}
+      >
+        Live: {userCount}
       </div>
     </div>
   );
