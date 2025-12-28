@@ -17,7 +17,7 @@ export default function CreateRoomModal({
         {/* Only allow clicking on Rainy Room */}
         <ThemeCard
           title="Rainy Room"
-          imageUrl="/assets/ui/rainy-theme.png"
+          imageUrl="/assets/ui/rainy-theme_compressed.png"
           theme="rainy"
           description="Chill beats & Rain"
           colorClass="bg-blue-900/50 border-blue-500/50"
@@ -26,7 +26,7 @@ export default function CreateRoomModal({
         <div className="opacity-50 cursor-not-allowed grayscale">
           <ThemeCard
             title="Midnight Mart"
-            imageUrl="/assets/ui/midnight-theme.png"
+            imageUrl="/assets/ui/midnight-theme_compressed.png"
             theme="midnight"
             description="Coming Soon"
             colorClass="bg-purple-900"
@@ -36,7 +36,7 @@ export default function CreateRoomModal({
         <div className="opacity-50 cursor-not-allowed grayscale">
           <ThemeCard
             title="Forest Camp"
-            imageUrl="/assets/ui/forest-theme.png"
+            imageUrl="/assets/ui/forest-theme_compressed.png"
             theme="forest"
             description="Coming Soon"
             colorClass="bg-orange-900"

@@ -19,9 +19,9 @@ export default function LoadingScreen() {
       {/* 3. Content Layer */}
       <div className="z-10 flex flex-col items-center justify-center">
         <img
-          src="/assets/ui/loading-spinner.gif"
+          src="/assets/ui/loading-spinner_compressed.png"
           alt="Loading..."
-          className="w-32 h-32"
+          className="w-32 h-32 animate-spin"
           style={{ imageRendering: "pixelated" }}
         />
         <p
