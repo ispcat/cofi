@@ -16,7 +16,7 @@ export default function ThemeCard({ title, imageUrl, theme, description, colorCl
 
   return (
     <button
-      className={`relative p-8 rounded-2xl transition-all duration-300 transform ${
+      className={`relative w-full h-full p-8 rounded-2xl transition-all duration-300 transform ${
         isHovered ? 'scale-105 shadow-2xl' : 'scale-100'
       } ${colorClass} hover:brightness-110`}
       onMouseEnter={() => setIsHovered(true)}

@@ -23,7 +23,7 @@ export default function CreateRoomModal({
           colorClass="bg-blue-900/50 border-blue-500/50"
           onSelect={onSelectTheme}
         />
-        <div className="opacity-50 cursor-not-allowed grayscale">
+        <div className="w-full h-full opacity-50 cursor-not-allowed grayscale">
           <ThemeCard
             title="Midnight Mart"
             imageUrl="/assets/ui/midnight-theme_compressed.png"
@@ -33,7 +33,7 @@ export default function CreateRoomModal({
             onSelect={() => {}}
           />
         </div>
-        <div className="opacity-50 cursor-not-allowed grayscale">
+        <div className="w-full h-full opacity-50 cursor-not-allowed grayscale">
           <ThemeCard
             title="Forest Camp"
             imageUrl="/assets/ui/forest-theme_compressed.png"
