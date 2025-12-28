@@ -3,7 +3,7 @@ import './globals.css';
 import SessionManager from '@/components/SessionManager';
 
 export const metadata: Metadata = {
-  title: 'Cofi - Collaborative Lofi Music',
+  title: 'Co-Fi - Collaborative Lofi Music',
   description: 'Collaborative Lofi Music',
   icons: {
     icon: '/favicon.png',
