@@ -7,6 +7,7 @@ import LandingView from "@/components/LandingView";
 import RoomView from "@/components/RoomView";
 import JoinRoomModal from "@/components/JoinRoomModal";
 import CreateRoomModal from "@/components/CreateRoomModal";
+import LoadingScreen from "@/components/ui/LoadingScreen";
 
 type ViewState = "landing" | "room";
 
@@ -224,11 +225,7 @@ export default function Home() {
   };
 
   if (isLoading && view === "landing") {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white animate-pulse">
-        Loading...
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   // --- Room View ---

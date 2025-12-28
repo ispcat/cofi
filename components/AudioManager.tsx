@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 
 interface InteractiveObject {
   id: string;
@@ -11,13 +11,18 @@ interface InteractiveObject {
 }
 
 interface AudioManagerProps {
-  theme: 'rainy' | 'midnight' | 'forest';
+  theme: "rainy" | "midnight" | "forest";
   objects: InteractiveObject[];
   isMuted: boolean;
   roomCreatedAt: string;
 }
 
-export default function AudioManager({ theme, objects, isMuted, roomCreatedAt }: AudioManagerProps) {
+export default function AudioManager({
+  theme,
+  objects,
+  isMuted,
+  roomCreatedAt,
+}: AudioManagerProps) {
   const backgroundAudioRef = useRef<HTMLAudioElement | null>(null);
   const objectAudiosRef = useRef<{ [key: string]: HTMLAudioElement }>({});
   const [isInitialized, setIsInitialized] = useState(false);
@@ -28,7 +33,7 @@ export default function AudioManager({ theme, objects, isMuted, roomCreatedAt }:
     const roomCreatedTime = new Date(roomCreatedAt).getTime();
     const now = Date.now();
     const elapsed = (now - roomCreatedTime) / 1000; // seconds
-    
+
     if (audio.duration && !isNaN(audio.duration)) {
       return elapsed % audio.duration;
     }
@@ -38,13 +43,13 @@ export default function AudioManager({ theme, objects, isMuted, roomCreatedAt }:
   // Helper to resume/play audio manually
   const resumeAudio = () => {
     if (backgroundAudioRef.current) {
-        const bgAudio = backgroundAudioRef.current;
-        const syncTime = getSyncedPlaybackTime(bgAudio);
-        // Only set time if significant drift or not started
-        if (Math.abs(bgAudio.currentTime - syncTime) > 1) {
-            bgAudio.currentTime = syncTime;
-        }
-        bgAudio.play().catch(console.error);
+      const bgAudio = backgroundAudioRef.current;
+      const syncTime = getSyncedPlaybackTime(bgAudio);
+      // Only set time if significant drift or not started
+      if (Math.abs(bgAudio.currentTime - syncTime) > 1) {
+        bgAudio.currentTime = syncTime;
+      }
+      bgAudio.play().catch(console.error);
     }
     setBlocked(false);
   };
@@ -61,7 +66,7 @@ export default function AudioManager({ theme, objects, isMuted, roomCreatedAt }:
     backgroundAudioRef.current = bgAudio;
 
     // Pre-load object sounds
-    objects.forEach(obj => {
+    objects.forEach((obj) => {
       if (!obj.soundPath) return;
       const audio = new Audio(obj.soundPath);
       audio.loop = true;
@@ -71,7 +76,7 @@ export default function AudioManager({ theme, objects, isMuted, roomCreatedAt }:
     });
 
     // Wait for audio metadata to load, then sync playback position
-    bgAudio.addEventListener('loadedmetadata', () => {
+    bgAudio.addEventListener("loadedmetadata", () => {
       const syncTime = getSyncedPlaybackTime(bgAudio);
       bgAudio.currentTime = syncTime;
       console.log(`Syncing background music to ${syncTime.toFixed(2)}s`);
@@ -79,23 +84,23 @@ export default function AudioManager({ theme, objects, isMuted, roomCreatedAt }:
 
     // Start background music immediately
     const playPromise = bgAudio.play();
-    
+
     if (playPromise !== undefined) {
-      playPromise.catch(err => {
-        console.log('Background music autoplay blocked by browser.');
+      playPromise.catch((err) => {
+        console.log("Background music autoplay blocked by browser.");
         setBlocked(true);
-        
+
         // Fallback: also listen for global clicks just in case user ignores overlay
         const autoResume = () => {
           resumeAudio();
-          document.removeEventListener('click', autoResume);
-          document.removeEventListener('keydown', autoResume);
-          document.removeEventListener('touchstart', autoResume);
+          document.removeEventListener("click", autoResume);
+          document.removeEventListener("keydown", autoResume);
+          document.removeEventListener("touchstart", autoResume);
         };
-        
-        document.addEventListener('click', autoResume, { once: true });
-        document.addEventListener('keydown', autoResume, { once: true });
-        document.addEventListener('touchstart', autoResume, { once: true });
+
+        document.addEventListener("click", autoResume, { once: true });
+        document.addEventListener("keydown", autoResume, { once: true });
+        document.addEventListener("touchstart", autoResume, { once: true });
       });
     }
 
@@ -108,7 +113,7 @@ export default function AudioManager({ theme, objects, isMuted, roomCreatedAt }:
       backgroundAudioRef.current.muted = isMuted;
     }
 
-    Object.values(objectAudiosRef.current).forEach(audio => {
+    Object.values(objectAudiosRef.current).forEach((audio) => {
       audio.muted = isMuted;
     });
   }, [isMuted]);
@@ -122,7 +127,9 @@ export default function AudioManager({ theme, objects, isMuted, roomCreatedAt }:
       if (!audio) return;
 
       if (obj.isActive) {
-        audio.play().catch(err => console.log('Object sound play error:', err));
+        audio
+          .play()
+          .catch((err) => console.log("Object sound play error:", err));
       } else {
         audio.pause();
         audio.currentTime = 0;
@@ -138,7 +145,7 @@ export default function AudioManager({ theme, objects, isMuted, roomCreatedAt }:
         backgroundAudioRef.current = null;
       }
 
-      Object.values(objectAudiosRef.current).forEach(audio => {
+      Object.values(objectAudiosRef.current).forEach((audio) => {
         audio.pause();
       });
       objectAudiosRef.current = {};
@@ -148,16 +155,18 @@ export default function AudioManager({ theme, objects, isMuted, roomCreatedAt }:
   if (!blocked) return null;
 
   return (
-    <div 
-        className="fixed inset-0 z-[60] flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm cursor-pointer"
-        onClick={resumeAudio}
+    <div
+      className="fixed inset-0 z-[60] flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm cursor-pointer"
+      onClick={resumeAudio}
     >
-        <img 
-            src="/assets/control/play.png" 
-            alt="Click to Start Audio" 
-            className="w-24 h-24 hover:scale-110 transition-transform animate-pulse mb-4"
-        />
-        <p className="text-white/80 font-mono text-sm uppercase tracking-widest drop-shadow-md">Click to Start Audio</p>
+      <img
+        src="/assets/control/play.png"
+        alt="Click to Start Audio"
+        className="w-24 h-24 hover:scale-110 transition-transform animate-pulse mb-4"
+      />
+      <p className="text-white/80 font-mono text-sm uppercase tracking-widest drop-shadow-md">
+        Click to Start Audio
+      </p>
     </div>
   );
 }
