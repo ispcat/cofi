@@ -4,7 +4,7 @@ import SessionManager from '@/components/SessionManager';
 
 export const metadata: Metadata = {
   title: 'Co-Fi - Collaborative Lofi Music',
-  description: 'Collaborative Lofi Music',
+  description: 'A multi-user collaborative visual Lo-Fi music social platform.',
   icons: {
     icon: '/favicon.png',
   },
