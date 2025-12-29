@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.11](https://github.com/ispcat/cofi/compare/v1.0.10...v1.0.11) (2025-12-29)
+
+
+### Bug Fixes
+
+* title layout of the page ([#30](https://github.com/ispcat/cofi/issues/30)) ([dc429d5](https://github.com/ispcat/cofi/commit/dc429d58941aeb8223e7ac544960101afada0fd6))
+
 ## [1.0.10](https://github.com/ispcat/cofi/compare/v1.0.9...v1.0.10) (2025-12-28)
 
 
