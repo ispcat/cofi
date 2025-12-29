@@ -5,7 +5,7 @@
 **Maximally Vibe-a-thon Submission**
 
 [![Devpost](https://img.shields.io/badge/Devpost-Hackathon_Submission-003e54?style=for-the-badge&logo=devpost)](https://devpost.com/software/cofi)
-[![Live Demo](https://img.shields.io/badge/Live-Demo-70d1f4?style=for-the-badge&logo=vercel&logoColor=white)](https://cofi.001015.xyz)
+[![Live Demo](https://img.shields.io/badge/Live-Demo-70d1f4?style=for-the-badge&logo=render&logoColor=white)](https://cofi.001015.xyz)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=for-the-badge)](LICENSE)
 
 ## About the Project
