@@ -41,11 +41,11 @@ This project marks a temporary caesura in our development. We have successfully 
 
 ## 🖼️ Gallery
 
-| Landing Page | Vibe Selection |
+| **Landing Page** | **Vibe Selection** |
 |:---:|:---:|
-| ![Landing](docs/assets/cofi-1.png) | ![Selection](docs/assets/cofi-2.png) |
-| Active Session | Join room |
-| ![Active Session](docs/assets/cofi-3.png) | ![Join Room](docs/assets/cofi-4.png) |
+| ![Landing](docs/assets/cofi-1.png)<br>Landing page. Users can choose to create a new room or join an existing collaborative session. | ![Selection](docs/assets/cofi-2.png)<br>Vibe selection modal. Allows users to switch between different visual themes and ambient backgrounds. |
+| **Active Session** | **Join Room** |
+| ![Active Session](docs/assets/cofi-3.png)<br>Active session interface. Displays the current Room ID, dynamic pixel art background, and audio controls. | ![Join Room](docs/assets/cofi-4.png)<br>Join Room modal. Users enter a specific Room ID to connect to an existing music session. |
 
 ## 🛠️ Built With
 
@@ -80,9 +80,29 @@ npm run build
 npm start
 ```
 
+### 🐳 Docker Support
+
+We provide Docker configurations for both development and production.
+
+**Development**
+
+The default `docker-compose.yml` sets up a complete development environment (Node.js 22 Alpine) with **hot reloading** enabled. It automatically handles the installation of build dependencies for `better-sqlite3`.
+
+```bash
+docker compose up
+```
+
+**Production**
+
+For a production-ready build using `docker-compose.prod.yml`:
+
+```bash
+docker compose -f docker-compose.prod.yml up -d --build
+```
+
 ## 📄 License
 
-This project is licensed under the Apache License 2.0.
+This project is licensed under the [Apache License 2.0](LICENSE).
 
 ---
 
